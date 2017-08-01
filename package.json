@@ -1,0 +1,27 @@
+{
+  "name": "ipld-radix-tree",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "coverage": "node --expose-wasm --harmony ./node_modules/istanbul/lib/cli.js cover ./tests/index.js",
+    "coveralls": "npm run coverage && coveralls <coverage/lcov.info",
+    "lint": "standard",
+    "test": "node --expose-wasm --harmony ./tests/index.js"
+  },
+  "author": "mjbecze <mjbecze@gmail.com>",
+  "license": "MPL-2.0",
+  "keywords": [],
+  "devDependencies": {
+    "coveralls": "^2.13.1",
+    "ipfs": "^0.25.0",
+    "istanbul": "^1.1.0-alpha.1",
+    "standard": "^10.0.0",
+    "tape": "^4.6.3"
+  },
+  "dependencies": {
+    "ipld-graph-builder": "^1.2.4",
+    "text-encoding": "^0.6.4",
+    "uint1array": "^1.0.5"
+  }
+}
