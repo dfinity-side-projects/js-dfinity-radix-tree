@@ -18,6 +18,7 @@ node.on('ready', () => {
       t.equals(val, 'cat')
       await tree.set('te', 'blop')
       val = await tree.get('test')
+      // console.log('val', val)
       t.equals(val, 'cat')
 
       val = await tree.get('te')
@@ -27,6 +28,10 @@ node.on('ready', () => {
 
       val = await tree.get('rad')
       t.equals(val, 'cat2')
+
+      await tree.set('test', 'cat111')
+      val = await tree.get('test')
+      t.equals(val, 'cat111')
     } catch (e) {
       console.log(e)
     }
@@ -44,11 +49,15 @@ node.on('ready', () => {
       await tree.set(key1, 'cat2')
       let val = await tree.get(key0)
       t.equals(val, 'cat')
+
       val = await tree.get(key1)
       t.equals(val, 'cat2')
 
       let key3 = new RadixTree.ArrayConstructor([0, 1, 0, 1, 1])
       await tree.set(key3, 'test')
+      val = await tree.get(key3)
+
+      t.equals(val, 'test')
     } catch (e) {
       console.log(e)
     }
