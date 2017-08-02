@@ -4,57 +4,40 @@ const TextEncoder = require('text-encoding').TextEncoder
 
 const encoder = new TextEncoder('utf-8')
 
-module.exports = class RadixTree {
+const RadixTree = module.exports = class RadixTree {
   constructor (opts) {
     this.root = opts.root || {'/': null}
     this.dag = opts.dag
-    this.radix = opts.radix || 2
+    this.radix = 2
     this.graph = new Graph(this.dag)
   }
 
-  get ArrayConstructor () {
-    switch (this.radix) {
-      case 2:
-        return Uint1Array
-      case 8:
-        return Uint8Array
-      case 16:
-        return Uint16Array
-      case 32:
-        return Uint32Array
-    }
+  static get ArrayConstructor () {
+    return Uint1Array
   }
 
-  toTypedArray (array) {
-    return new this.ArrayConstructor(new Uint8Array(array).buffer)
+  static toTypedArray (array) {
+    return new RadixTree.ArrayConstructor(new Uint8Array(array).buffer)
   }
 
   async _get (key) {
     let index = 0
     let root = this.root
-    while (key.length > index) {
+    while (1) {
       if (isExtension(root)) {
         let extensionIndex = 0
-        const extension = this.toTypedArray(getExtension(root))
+        const extensionLen = getLength(root)
+        const extension = getExtension(root)
         let subKey
-        // alll extension are padded to 8 bit alignment. So we need to update
-        // the index later to count for the added padding
-        let padLen
-        if (this.radix === 2) {
-          subKey = key.slice(index, index + extension.length)
-          padLen = subKey.length
-          subKey = new this.ArrayConstructor(subKey.buffer)
-          padLen = subKey.length - padLen
-        } else {
-          subKey = key.subarray(index, extension.length)
-        }
+        subKey = key.slice(index, index + extensionLen)
+
         // checks the extension against the key
-        while (extensionIndex < extension.length && extension[extensionIndex] === subKey[extensionIndex]) {
+        while (extensionIndex < extensionLen && extension[extensionIndex] === subKey[extensionIndex]) {
           extensionIndex++
         }
-        index += extensionIndex - padLen
+        index += extensionIndex
         // check if we compelete travered the extension
-        if (extensionIndex !== extension.length) {
+        if (extensionIndex !== extensionLen) {
           return {
             extensionIndex: extensionIndex,
             root: root,
@@ -64,10 +47,13 @@ module.exports = class RadixTree {
       }
 
       let keySegment = key[index]
-      if (keySegment) {
+      if (keySegment !== undefined) {
         const branch = getBranch(root)
         await this.graph.get(branch, keySegment)
+        // preseves the '/'
         root = branch[keySegment]
+      } else {
+        break
       }
 
       index++
@@ -77,7 +63,7 @@ module.exports = class RadixTree {
     // get the value
     let value
     if (Array.isArray(node)) {
-      value = node[node.length - 1]
+      value = node[this.radix]
     } else {
       value = node
     }
@@ -95,8 +81,8 @@ module.exports = class RadixTree {
 
   async get (key) {
     key = this.formatKey(key)
-    const results = await this._get(key)
-    return results.value
+    const result = await this._get(key)
+    return result.value
   }
 
   async set (key, value) {
@@ -104,10 +90,7 @@ module.exports = class RadixTree {
 
     // initial set
     if (this.root['/'] === null) {
-      this.root['/'] = {
-        extension: new Buffer(key.buffer),
-        node: value
-      }
+      this.root['/'] = createExtension(key, value)['/']
       return
     }
 
@@ -117,16 +100,16 @@ module.exports = class RadixTree {
 
     if (result.extensionIndex !== undefined) {
       // split the extension node in two
-      let extension = this.toTypedArray(getExtension(root))
-      const extensionKey = extension[result.extensionIndex + 1]
-      const remExtension = extension.subarray(1 - result.extensionIndex)
+      let extension = getExtension(root)
+      const extensionKey = extension[result.extensionIndex]
+      const remExtension = extension.subarray(result.extensionIndex + 1)
       extension = extension.subarray(0, result.extensionIndex)
 
       const node = getNode(root)
       let newNode
       // create the new extension node
       if (extension.length) {
-        setExtension(root, new Buffer(extension.buffer))
+        setExtension(root, extension)
         newNode = []
         setNode(root, newNode)
       } else {
@@ -135,7 +118,7 @@ module.exports = class RadixTree {
 
       // save the remainer of the extension node
       if (remExtension.length) {
-        newNode[extensionKey] = createExtension(new Buffer(remExtension.buffer), node)
+        newNode[extensionKey] = createExtension(remExtension, node)
       } else {
         newNode[extensionKey] = node
       }
@@ -145,7 +128,7 @@ module.exports = class RadixTree {
     if (result.index + 1 < key.length) {
       // if there are remaning key segments create an extension node
       const extension = key.subarray(result.index + 1, key.length)
-      newNode = createExtension(new Buffer(extension.buffer), value)
+      newNode = createExtension(extension, value)
     } else {
       newNode = value
     }
@@ -209,8 +192,10 @@ module.exports = class RadixTree {
   formatKey (key) {
     if (typeof key === 'string') {
       key = encoder.encode(key)
+      return new RadixTree.ArrayConstructor(key.buffer)
+    } else {
+      return key
     }
-    return new this.ArrayConstructor(key.buffer)
   }
 }
 
@@ -218,7 +203,7 @@ function getBranch (node) {
   if (isExtension(node)) {
     return getNode(node)
   } else {
-    return root['/']
+    return node['/']
   }
 }
 
@@ -227,26 +212,32 @@ function isExtension (node) {
 }
 
 function getExtension (node) {
-  return node['/'].extension
+  return RadixTree.toTypedArray(node['/'].extension).subarray(0, getLength(node))
 }
 
 function getNode (node) {
   return node['/'].node
 }
 
+function getLength (node) {
+  return node['/'].length
+}
+
 function setExtension (node, ex) {
-  node['/'].extension = ex
+  node['/'].extension = new Buffer(ex.buffer)
+  node['/'].length = ex.length
 }
 
 function setNode (node, val) {
   node['/'].node = val
 }
 
-function createExtension(ex, node) {
+function createExtension (ex, node) {
   return {
     '/': {
-      extension: ex,
-      node: node
+      extension: new Buffer(ex.buffer),
+      node: node,
+      length: ex.length
     }
   }
 }
