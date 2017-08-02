@@ -32,27 +32,28 @@ module.exports = class RadixTree {
   async _get (key) {
     let index = 0
     let root = this.root
-    let extensionIndex = 0
     while (key.length > index) {
-      extensionIndex = 0
-      let nextRoot
-
       if (root['/'].extension) {
+        let extensionIndex = 0
         const extension = this.toTypedArray(root['/'].extension)
         let subKey
-        let subKeyLen
+        // alll extension are padded to 8 bit alignment. So we need to update
+        // the index later to count for the added padding
+        let padLen
         if (this.radix === 2) {
           subKey = key.slice(index, index + extension.length)
-          subKeyLen = subKey.length
+          padLen = subKey.length
           subKey = new this.ArrayConstructor(subKey.buffer)
-          subKeyLen = subKey.length - subKeyLen
+          padLen = subKey.length - padLen
         } else {
           subKey = key.subarray(index, extension.length)
         }
+        // checks the extension against the key
         while (extensionIndex < extension.length && extension[extensionIndex] === subKey[extensionIndex]) {
           extensionIndex++
         }
-        index += extensionIndex - subKeyLen
+        index += extensionIndex - padLen
+        // check if we compelete travered the extension
         if (extensionIndex !== extension.length) {
           return {
             extensionIndex: extensionIndex,
@@ -60,55 +61,33 @@ module.exports = class RadixTree {
             index: index
           }
         }
+      }
 
-        let keySegment = key[index]
-        if (Array.isArray(root['/'].node) && keySegment) {
-          await this.graph.get(root['/'].node, keySegment)
-          nextRoot = root['/'].node[keySegment]
-          if (!nextRoot) {
-            return {
-              root: root,
-              index: index
-            }
-          }
-          root = nextRoot
-        }
-      } else {
-        let keySegment = key[index]
-        await this.graph.get(root, keySegment)
-        nextRoot = root['/'][keySegment]
-        if (!nextRoot) {
-          return {
-            root: root,
-            index: index
-          }
-        }
-        root = nextRoot
+      let keySegment = key[index]
+      if (keySegment) {
+        const branch = getBranch(root)
+        await this.graph.get(branch, keySegment)
+        root = branch[keySegment]
       }
 
       index++
     }
+
+    const node = getBranch(root)
+    // get the value
     let value
-    if (root['/'].extension) {
-      if (Array.isArray(root['/'].node)) {
-        value = root['/'].node[root['/'].node.length - 1]
-      } else {
-        value = root['/'].node
-      }
+    if (Array.isArray(node)) {
+      value = node[node.length - 1]
     } else {
-      if (Array.isArray(root['/'])) {
-        value = root['/'][root.length - 1]
-      } else {
-        value = root['/']
-      }
+      value = node
     }
+
     if (value.length >= 32) {
       value = await this.graph.get(root, root.length - 1)
     }
 
     return {
       value: value,
-      extensionIndex: extensionIndex,
       root: root,
       index: index
     }
@@ -137,39 +116,32 @@ module.exports = class RadixTree {
     let keySegment = key[result.index]
 
     if (result.extensionIndex !== undefined) {
+      // split the extension node in two
       let extension = this.toTypedArray(root['/'].extension)
-      // save the common part of the extension
       const extensionKey = extension[result.extensionIndex + 1]
       const remExtension = extension.subarray(1 - result.extensionIndex)
       extension = extension.subarray(0, result.extensionIndex)
-      const node = root['/'].node
 
+      const node = root['/'].node
+      let newNode
+      // create the new extension node
       if (extension.length) {
         root['/'].extension = new Buffer(extension.buffer)
-        root['/'].node = []
-        if (remExtension.length) {
-          root['/'].node[extensionKey] = {
-            '/': {
-              extension: new Buffer(remExtension.buffer),
-              node: node
-            }
+        newNode = root['/'].node = []
+      } else {
+        newNode = root['/'] = []
+      }
+
+      // save the remainer of the extension node
+      if (remExtension.length) {
+        newNode[extensionKey] = {
+          '/': {
+            extension: new Buffer(remExtension.buffer),
+            node: node
           }
-        } else {
-          root['/'].node[extensionKey] = node
         }
       } else {
-        // there is no extension
-        root['/'] = []
-        if (remExtension.length) {
-          root['/'][extensionKey] = {
-            '/': {
-              extension: remExtension,
-              node: node
-            }
-          }
-        } else {
-          root['/'][extensionKey] = node
-        }
+        newNode[extensionKey] = node
       }
     }
 
@@ -187,69 +159,59 @@ module.exports = class RadixTree {
       newNode = value
     }
 
-    if (root['/'].extension) {
-      if (!Array.isArray(root['/'].node)) {
-        const val = root['/'].node
-        root['/'].node = []
-        root['/'].node[this.radix] = val
-      }
-      if (keySegment === undefined) {
-        root['/'].node[this.radix] = newNode
-      } else {
-        root['/'].node[keySegment] = newNode
-      }
+    let targetNode = getBranch(root)
+
+    // set the value
+    if (keySegment === undefined) {
+      targetNode[this.radix] = newNode
     } else {
-      if (keySegment === undefined) {
-        root['/'][this.radix] = newNode
-      } else {
-        root['/'][keySegment] = newNode
-      }
+      targetNode[keySegment] = newNode
     }
   }
 
-  async delete (key) {
-    key = new this.ArrayConstructor(key)
-    const results = await this._get(key)
-    const root = results.root
-    if (results.value) {
-      if (results.extensionIndex) {
-        key = key.subarray(-results.extensionIndex)
-      }
-      const keySegment = key[key.length - 1]
-      delete root[keySegment]
-      if (this.isEmptyNode(root) && results.parent) {
-        delete results.parent[results.parentKey]
-      } else if (!root[root.length - 1]) {
-        let oneNode = false
-        let rNodeIndex
-        for (let i = 0; i < root.length - 1; i++) {
-          const el = root[i]
-          if (el) {
-            if (!oneNode) {
-              rNodeIndex = i
-              oneNode = true
-            } else {
-              oneNode = false
-              break
-            }
-          }
-        }
+  // async delete (key) {
+  //   key = new this.ArrayConstructor(key)
+  //   const results = await this._get(key)
+  //   const root = results.root
+  //   if (results.value) {
+  //     if (results.extensionIndex) {
+  //       key = key.subarray(-results.extensionIndex)
+  //     }
+  //     const keySegment = key[key.length - 1]
+  //     delete root[keySegment]
+  //     if (this.isEmptyNode(root) && results.parent) {
+  //       delete results.parent[results.parentKey]
+  //     } else if (!root[root.length - 1]) {
+  //       let oneNode = false
+  //       let rNodeIndex
+  //       for (let i = 0; i < root.length - 1; i++) {
+  //         const el = root[i]
+  //         if (el) {
+  //           if (!oneNode) {
+  //             rNodeIndex = i
+  //             oneNode = true
+  //           } else {
+  //             oneNode = false
+  //             break
+  //           }
+  //         }
+  //       }
 
-        if (oneNode) {
-          let extension = root[rNodeIndex].extension || []
-          extension = concat([rNodeIndex], extension)
-          const parentExtenstion = results.parent[results.parentIndex].extension
-          if (parentExtenstion) {
-            extension = concat(parentExtenstion, extension)
-          }
-          results.parent[results.parentIndex] = {
-            extension: extension,
-            root: root
-          }
-        }
-      }
-    }
-  }
+  //       if (oneNode) {
+  //         let extension = root[rNodeIndex].extension || []
+  //         extension = concat([rNodeIndex], extension)
+  //         const parentExtenstion = results.parent[results.parentIndex].extension
+  //         if (parentExtenstion) {
+  //           extension = concat(parentExtenstion, extension)
+  //         }
+  //         results.parent[results.parentIndex] = {
+  //           extension: extension,
+  //           root: root
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
   isEmptyNode (node) {
     return node.evey(el => !el)
   }
@@ -261,7 +223,11 @@ module.exports = class RadixTree {
   }
 }
 
-function concat(a, b) {}
-function readData (data) {
-  return new Uint8Array(data)
+function getBranch (node) {
+  if (node['/'].extension) {
+    return node['/'].node
+  } else {
+    return root['/']
+  }
 }
+
