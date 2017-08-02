@@ -33,9 +33,9 @@ module.exports = class RadixTree {
     let index = 0
     let root = this.root
     while (key.length > index) {
-      if (root['/'].extension) {
+      if (isExtension(root)) {
         let extensionIndex = 0
-        const extension = this.toTypedArray(root['/'].extension)
+        const extension = this.toTypedArray(getExtension(root))
         let subKey
         // alll extension are padded to 8 bit alignment. So we need to update
         // the index later to count for the added padding
@@ -117,29 +117,25 @@ module.exports = class RadixTree {
 
     if (result.extensionIndex !== undefined) {
       // split the extension node in two
-      let extension = this.toTypedArray(root['/'].extension)
+      let extension = this.toTypedArray(getExtension(root))
       const extensionKey = extension[result.extensionIndex + 1]
       const remExtension = extension.subarray(1 - result.extensionIndex)
       extension = extension.subarray(0, result.extensionIndex)
 
-      const node = root['/'].node
+      const node = getNode(root)
       let newNode
       // create the new extension node
       if (extension.length) {
-        root['/'].extension = new Buffer(extension.buffer)
-        newNode = root['/'].node = []
+        setExtension(root, new Buffer(extension.buffer))
+        newNode = []
+        setNode(root, newNode)
       } else {
         newNode = root['/'] = []
       }
 
       // save the remainer of the extension node
       if (remExtension.length) {
-        newNode[extensionKey] = {
-          '/': {
-            extension: new Buffer(remExtension.buffer),
-            node: node
-          }
-        }
+        newNode[extensionKey] = createExtension(new Buffer(remExtension.buffer), node)
       } else {
         newNode[extensionKey] = node
       }
@@ -149,12 +145,7 @@ module.exports = class RadixTree {
     if (result.index + 1 < key.length) {
       // if there are remaning key segments create an extension node
       const extension = key.subarray(result.index + 1, key.length)
-      newNode = {
-        '/': {
-          extension: new Buffer(extension.buffer),
-          node: value
-        }
-      }
+      newNode = createExtension(new Buffer(extension.buffer), value)
     } else {
       newNode = value
     }
@@ -224,10 +215,38 @@ module.exports = class RadixTree {
 }
 
 function getBranch (node) {
-  if (node['/'].extension) {
-    return node['/'].node
+  if (isExtension(node)) {
+    return getNode(node)
   } else {
     return root['/']
   }
 }
 
+function isExtension (node) {
+  return !!node['/'].extension
+}
+
+function getExtension (node) {
+  return node['/'].extension
+}
+
+function getNode (node) {
+  return node['/'].node
+}
+
+function setExtension (node, ex) {
+  node['/'].extension = ex
+}
+
+function setNode (node, val) {
+  node['/'].node = val
+}
+
+function createExtension(ex, node) {
+  return {
+    '/': {
+      extension: ex,
+      node: node
+    }
+  }
+}
