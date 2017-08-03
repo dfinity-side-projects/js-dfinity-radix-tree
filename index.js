@@ -4,6 +4,10 @@ const TextEncoder = require('text-encoding').TextEncoder
 
 const encoder = new TextEncoder('utf-8')
 
+const EXTENSION = 0
+const BRANCH = 1
+const VALUE = 2
+
 const RadixTree = module.exports = class RadixTree {
   constructor (opts) {
     this.root = opts.root || {'/': null}
@@ -23,6 +27,7 @@ const RadixTree = module.exports = class RadixTree {
   async _get (key) {
     let index = 0
     let root = this.root
+    let parent
     while (1) {
       if (hasExtension(root)) {
         let extensionIndex = 0
@@ -58,6 +63,7 @@ const RadixTree = module.exports = class RadixTree {
             index: index
           }
         } else {
+          parent = root
           root = nextRoot
         }
       } else {
@@ -69,13 +75,14 @@ const RadixTree = module.exports = class RadixTree {
 
     let value = getValue(root)
 
-    if (value.length >= 32) {
-      value = await this.graph.get(root, root.length - 1)
+    if (value && value['/']) {
+      value = await this.graph.get(root, VALUE)
     }
 
     return {
       value: value,
       root: root,
+      parent: parent,
       index: index
     }
   }
@@ -89,88 +96,99 @@ const RadixTree = module.exports = class RadixTree {
   async set (key, value) {
     key = RadixTree.formatKey(key)
 
+    if (value.length > 32) {
+      value = {'/': value}
+    }
+
     // initial set
     if (this.root['/'] === null) {
-      this.root['/'] = createNode(value, key)['/']
-      return
-    }
-
-    const result = await this._get(key)
-    let root = result.root
-
-    if (result.value) {
-      setValue(root, value)
-      return
-    }
-
-    if (result.extensionIndex !== undefined) {
-      // split the extension node in two
-      let extension = getExtension(root)
-      const extensionKey = extension[result.extensionIndex]
-      const remExtension = extension.subarray(result.extensionIndex + 1)
-      extension = extension.subarray(0, result.extensionIndex)
-
-      setExtension(root, remExtension)
-      const branch = []
-      branch[extensionKey] = {'/': root['/']}
-      root['/'] = createNode(null, extension, branch)['/']
-    }
-
-    // if there are remaning key segments create an extension node
-    if (result.index < key.length) {
-      const keySegment = key[result.index]
-      const extension = key.subarray(result.index + 1, key.length)
-      const newNode = createNode(value, extension)
-      const rootBranch = getBranch(root)
-      rootBranch[keySegment] = newNode
+      this.root['/'] = createNode(key, [], value)['/']
     } else {
-      setValue(root, value)
+      const result = await this._get(key)
+      let root = result.root
+
+      if (result.value) {
+        setValue(root, value)
+      } else {
+        if (result.extensionIndex !== undefined) {
+          // split the extension node in two
+          let extension = getExtension(root)
+          const extensionKey = extension[result.extensionIndex]
+          const remExtension = extension.subarray(result.extensionIndex + 1)
+          extension = extension.subarray(0, result.extensionIndex)
+
+          setExtension(root, remExtension)
+          const branch = []
+          branch[extensionKey] = {'/': root['/']}
+          root['/'] = createNode(extension, branch)['/']
+        }
+
+        // if there are remaning key segments create an extension node
+        if (result.index < key.length) {
+          const keySegment = key[result.index]
+          const extension = key.subarray(result.index + 1, key.length)
+          const newNode = createNode(extension, [], value)
+          const rootBranch = getBranch(root)
+          rootBranch[keySegment] = newNode
+        } else {
+          setValue(root, value)
+        }
+      }
     }
   }
 
-  // async delete (key) {
-  //   key = new this.ArrayConstructor(key)
-  //   const results = await this._get(key)
-  //   const root = results.root
-  //   if (results.value) {
-  //     if (results.extensionIndex) {
-  //       key = key.subarray(-results.extensionIndex)
-  //     }
-  //     const keySegment = key[key.length - 1]
-  //     delete root[keySegment]
-  //     if (this.isEmptyNode(root) && results.parent) {
-  //       delete results.parent[results.parentKey]
-  //     } else if (!root[root.length - 1]) {
-  //       let oneNode = false
-  //       let rNodeIndex
-  //       for (let i = 0; i < root.length - 1; i++) {
-  //         const el = root[i]
-  //         if (el) {
-  //           if (!oneNode) {
-  //             rNodeIndex = i
-  //             oneNode = true
-  //           } else {
-  //             oneNode = false
-  //             break
-  //           }
-  //         }
-  //       }
+  async delete (key) {
+    key = RadixTree.formatKey(key)
+    const results = await this._get(key)
+    if (results.value) {
+      const root = results.root
+      const parent = results.parent
 
-  //       if (oneNode) {
-  //         let extension = root[rNodeIndex].extension || []
-  //         extension = concat([rNodeIndex], extension)
-  //         const parentExtenstion = results.parent[results.parentIndex].extension
-  //         if (parentExtenstion) {
-  //           extension = concat(parentExtenstion, extension)
-  //         }
-  //         results.parent[results.parentIndex] = {
-  //           extension: extension,
-  //           root: root
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+      deleteValue(root)
+
+      if (getBranch(root).length) {
+        joinNodes(root)
+      } else {
+        if (!parent) {
+          root['/'] = null
+        } else {
+          let branch = getBranch(parent)
+          branch = branch.map(node => node === root ? null : node)
+          setBranch(parent, branch)
+
+          joinNodes(parent)
+        }
+      }
+    }
+
+    function joinNodes (root) {
+      if (getValue(root) === undefined) {
+        let index
+        const branch = getBranch(root)
+        const nodes = branch.filter((node, i) => {
+          if (node) {
+            index = i
+            return true
+          }
+        })
+
+        if (nodes.length === 1) {
+          const child = nodes[0]
+          const pExtension = getExtension(root)
+          const childExtension = getExtension(child)
+          const newExtension = new RadixTree.ArrayConstructor(pExtension.length + childExtension.length + 1)
+
+          newExtension.set(pExtension)
+          newExtension[pExtension.length] = index
+          newExtension.set(childExtension, pExtension.length + 1)
+
+          setExtension(child, newExtension)
+          root['/'] = child['/']
+        }
+      }
+    }
+  }
+
   static formatKey (key) {
     if (typeof key === 'string') {
       key = encoder.encode(key)
@@ -181,50 +199,59 @@ const RadixTree = module.exports = class RadixTree {
   }
 }
 
+function setBranch (node, branch) {
+  node['/'][BRANCH] = branch
+}
+
 function getBranch (node) {
-  return node['/'].branch
+  return node['/'][BRANCH]
 }
 
 function getValue (node) {
-  return node['/'].value
+  return node['/'][VALUE]
+}
+
+function deleteValue (node) {
+  node['/'].pop()
 }
 
 function hasExtension (node) {
-  return !!node['/'].extension
+  return node['/'][EXTENSION].length === 2
 }
 
 function getExtension (node) {
-  return RadixTree.toTypedArray(node['/'].extension[1]).subarray(0, getExLength(node))
+  return RadixTree.toTypedArray(node['/'][EXTENSION][1]).subarray(0, getExLength(node))
 }
 
 function getExLength (node) {
-  return node['/'].extension[0]
+  return node['/'][EXTENSION][0]
 }
 
 function setExtension (node, ex) {
   if (ex && ex.length) {
-    node['/'].extension = [ex.length, new Buffer(ex.buffer)]
+    node['/'][EXTENSION] = [ex.length, new Buffer(ex.buffer)]
   } else {
-    node['/'].extension = null
+    node['/'][EXTENSION] = []
   }
 }
 
 function setValue (node, val) {
-  node['/'].value = val
+  node['/'][VALUE] = val
 }
 
-function createNode (value, ex, branch = []) {
+function createNode (ex, branch, value) {
   if (ex && ex.length) {
     ex = [ex.length, new Buffer(ex.buffer)]
   } else {
-    ex = null
+    ex = []
   }
 
-  return {
-    '/': {
-      extension: ex,
-      branch: branch,
-      value: value
-    }
+  const node = {
+    '/': [ex, branch]
   }
+
+  if (value !== undefined) {
+    node['/'].push(value)
+  }
+  return node
 }
