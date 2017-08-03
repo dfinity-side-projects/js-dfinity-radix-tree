@@ -11,9 +11,7 @@ const VALUE = 2
 const RadixTree = module.exports = class RadixTree {
   constructor (opts) {
     this.root = opts.root || {'/': null}
-    this.dag = opts.dag
-    this.radix = 2
-    this.graph = new Graph(this.dag)
+    this.graph = opts.graph || new Graph(opts.dag)
   }
 
   static get ArrayConstructor () {
@@ -29,6 +27,8 @@ const RadixTree = module.exports = class RadixTree {
     let root = this.root
     let parent
     while (1) {
+      // load the root
+      await this.graph.get(root, 0, true)
       if (hasExtension(root)) {
         let extensionIndex = 0
         const extensionLen = getExLength(root)
@@ -54,7 +54,7 @@ const RadixTree = module.exports = class RadixTree {
       let keySegment = key[index]
       if (keySegment !== undefined) {
         const branch = getBranch(root)
-        await this.graph.get(branch, keySegment)
+        await this.graph.get(branch, keySegment, true)
         // preseves the '/'
         const nextRoot = branch[keySegment]
         if (!nextRoot) {
@@ -76,7 +76,7 @@ const RadixTree = module.exports = class RadixTree {
     let value = getValue(root)
 
     if (value && value['/']) {
-      value = await this.graph.get(root, VALUE)
+      value = await this.graph.get(root, VALUE, true)
     }
 
     return {
@@ -189,13 +189,15 @@ const RadixTree = module.exports = class RadixTree {
     }
   }
 
+  flush () {
+    return this.graph.flush(this.root)
+  }
+
   static formatKey (key) {
     if (typeof key === 'string') {
       key = encoder.encode(key)
-      return new RadixTree.ArrayConstructor(key.buffer)
-    } else {
-      return key
     }
+    return new RadixTree.ArrayConstructor(key.buffer)
   }
 }
 
