@@ -7,13 +7,19 @@
     "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./tests/index.js",
     "coveralls": "npm run coverage && coveralls <coverage/lcov.info",
     "lint": "standard",
-    "test": "node ./tests/index.js"
+    "test": "node ./tests/index.js",
+    "build:docs": "documentation build ./index.js --github --sort-order source -f md  > ./docs/index.md"
   },
   "author": "mjbecze <mjbecze@gmail.com>",
   "license": "MPL-2.0",
-  "keywords": ["merkle", "tree", "ipfs"],
+  "keywords": [
+    "merkle",
+    "tree",
+    "ipfs"
+  ],
   "devDependencies": {
     "coveralls": "^2.13.1",
+    "documentation": "^5.1.1",
     "ipfs": "^0.25.0",
     "istanbul": "^1.1.0-alpha.1",
     "standard": "^10.0.0",
