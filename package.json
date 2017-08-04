@@ -1,6 +1,6 @@
 {
   "name": "merkle-radix-tree",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This implements a binary merkle radix tree",
   "main": "index.js",
   "scripts": {
