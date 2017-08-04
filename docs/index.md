@@ -12,7 +12,7 @@
 
 ## constructor
 
-[index.js:19-22](https://github.com/wanderer/merkle-radix-tree/blob/bef8976f2a564cf623b6149280f7efe17f4a2886/index.js#L19-L22 "Source code on GitHub")
+[index.js:20-23](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L20-L23 "Source code on GitHub")
 
 **Parameters**
 
@@ -23,7 +23,7 @@
 
 ## get
 
-[index.js:111-115](https://github.com/wanderer/merkle-radix-tree/blob/bef8976f2a564cf623b6149280f7efe17f4a2886/index.js#L111-L115 "Source code on GitHub")
+[index.js:112-116](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L112-L116 "Source code on GitHub")
 
 gets a value given a key
 
@@ -35,7 +35,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## set
 
-[index.js:122-165](https://github.com/wanderer/merkle-radix-tree/blob/bef8976f2a564cf623b6149280f7efe17f4a2886/index.js#L122-L165 "Source code on GitHub")
+[index.js:123-166](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L123-L166 "Source code on GitHub")
 
 stores a value at a given key
 
@@ -48,7 +48,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## delete
 
-[index.js:172-223](https://github.com/wanderer/merkle-radix-tree/blob/bef8976f2a564cf623b6149280f7efe17f4a2886/index.js#L172-L223 "Source code on GitHub")
+[index.js:173-224](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L173-L224 "Source code on GitHub")
 
 deletes a value at a given key
 
@@ -60,7 +60,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## flush
 
-[index.js:229-231](https://github.com/wanderer/merkle-radix-tree/blob/bef8976f2a564cf623b6149280f7efe17f4a2886/index.js#L229-L231 "Source code on GitHub")
+[index.js:230-232](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L230-L232 "Source code on GitHub")
 
 creates a merkle root for the current tree and stores the data perstantly
 
@@ -68,7 +68,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## ArrayConstructor
 
-[index.js:28-30](https://github.com/wanderer/merkle-radix-tree/blob/bef8976f2a564cf623b6149280f7efe17f4a2886/index.js#L28-L30 "Source code on GitHub")
+[index.js:29-31](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L29-L31 "Source code on GitHub")
 
 returns an Uint1Array constructir which is used to repersent keys
 
@@ -76,7 +76,7 @@ Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ## toTypedArray
 
-[index.js:37-39](https://github.com/wanderer/merkle-radix-tree/blob/bef8976f2a564cf623b6149280f7efe17f4a2886/index.js#L37-L39 "Source code on GitHub")
+[index.js:38-40](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L38-L40 "Source code on GitHub")
 
 converts a TypedArray or Buffer to an Uint1Array
 
