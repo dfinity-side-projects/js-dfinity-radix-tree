@@ -10,8 +10,10 @@
 # SYNOPSIS 
 This implements a binary merkle radix tree. The point of using a binary radix
 tree is that it generates smaller proof size then trees with larger radixes.
-This tree is well suited for storing large dictonaries of fairly random key. If
+This tree is well suited for storing large dictonaries of fairly random keys. If
 the keys are not random better performance can be achived by hashing them first.
+It builds on top of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder)
+and the resulting state and proofs are generated using it.
 
 # INSTALL
 `npm install merkle-radix-tree`
@@ -57,13 +59,13 @@ node.on('ready', async () => {
 ['./docs/'](./docs/index.md)
 
 # SPEC
-['./docs/spec.md']('./docs/spec.md')
+['./docs/spec.md'](./docs/spec.md)
 
 # BENCHMARKS
 The result of the benchmarks show that the binary radix tree produces proofs on
-average %67 small then Ethereum Trie with 100000 keys stored.
+average %67 small then the Ethereum Trie with 100000 keys stored.
 
-['./benchmarks/benchmarks.md']('./docs/spec.md')
+['./benchmarks/benchmarks.md']('./benchmarks/benchmarks.md')
 
 # TESTS
 `npm run tests`
