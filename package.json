@@ -26,8 +26,14 @@
     "tape": "^4.6.3"
   },
   "dependencies": {
+    "buffer": "^5.0.6",
     "ipld-graph-builder": "^1.2.4",
     "text-encoding": "^0.6.4",
     "uint1array": "^1.0.5"
+  },
+  "standard": {
+    "ignore": [
+      "/benchmark/"
+    ]
   }
 }

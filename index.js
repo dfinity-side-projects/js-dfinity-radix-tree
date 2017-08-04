@@ -1,4 +1,5 @@
 const Graph = require('ipld-graph-builder')
+const Buffer = require('safe-buffer').Buffer
 const Uint1Array = require('uint1array')
 const TextEncoder = require('text-encoding').TextEncoder
 
@@ -287,7 +288,7 @@ function getExLength (node) {
 
 function setExtension (node, ex) {
   if (ex && ex.length) {
-    node['/'][EXTENSION] = [ex.length, new Buffer(ex.buffer)]
+    node['/'][EXTENSION] = [ex.length, Buffer.from(ex.buffer)]
   } else {
     if (getValue(node) === undefined && node['/'][EXTENSION] !== undefined) {
       node['/'].pop()
