@@ -4,20 +4,36 @@ const TextEncoder = require('text-encoding').TextEncoder
 
 const encoder = new TextEncoder('utf-8')
 
-const EXTENSION = 0
-const BRANCH = 1
-const VALUE = 2
+const LBRANCH = 0
+const RBRANCH = 1
+const EXTENSION = 2
+const VALUE = 3
 
 const RadixTree = module.exports = class RadixTree {
+  /**
+   * @param opts
+   * @param opts.root {object} a merkle root to a radix tree. If none, RadixTree will create an new root.
+   * @param opts.graph {object} an instance of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder) alternitvly `opts.dag` can be used
+   * @param opts.dag {object} an instance if [ipfs.dag](https://github.com/ipfs/js-ipfs#dag). If there is no `opts.graph` this will be used to create a new graph instance.
+   */
   constructor (opts) {
     this.root = opts.root || {'/': undefined}
     this.graph = opts.graph || new Graph(opts.dag)
   }
 
+  /**
+   * returns an Uint1Array constructir which is used to repersent keys
+   * @returns {object}
+   */
   static get ArrayConstructor () {
     return Uint1Array
   }
 
+  /**
+   * converts a TypedArray or Buffer to an Uint1Array
+   * @param {TypedArray} array - the array to convert
+   * @returns {TypedArray}
+   */
   static toTypedArray (array) {
     return new RadixTree.ArrayConstructor(new Uint8Array(array).buffer)
   }
@@ -28,8 +44,8 @@ const RadixTree = module.exports = class RadixTree {
     let parent
     while (1) {
       // load the root
-      await this.graph.get(root, 0, true)
-      if (hasExtension(root)) {
+      const exNode = await this.graph.get(root, EXTENSION, true)
+      if (exNode) {
         let extensionIndex = 0
         const extensionLen = getExLength(root)
         const extension = getExtension(root)
@@ -87,12 +103,22 @@ const RadixTree = module.exports = class RadixTree {
     }
   }
 
+  /**
+   * gets a value given a key
+   * @param {*} key
+   * @return {Promise}
+   */
   async get (key) {
     key = RadixTree.formatKey(key)
     const result = await this._get(key)
     return result.value
   }
 
+  /**
+   * stores a value at a given key
+   * @param {*} key
+   * @return {Promise}
+   */
   async set (key, value) {
     key = RadixTree.formatKey(key)
 
@@ -130,6 +156,7 @@ const RadixTree = module.exports = class RadixTree {
           const newNode = createNode(extension, [], value)
           const rootBranch = getBranch(root)
           rootBranch[keySegment] = newNode
+          setBranch(root, rootBranch)
         } else {
           setValue(root, value)
         }
@@ -137,16 +164,22 @@ const RadixTree = module.exports = class RadixTree {
     }
   }
 
+  /**
+   * deletes a value at a given key
+   * @param {*} key
+   * @return {Promise}
+   */
   async delete (key) {
     key = RadixTree.formatKey(key)
     const results = await this._get(key)
-    if (results.value) {
+    if (results.value !== undefined) {
       const root = results.root
       const parent = results.parent
 
       deleteValue(root)
 
-      if (getBranch(root).length) {
+      const branch = getBranch(root)
+      if (branch.some(el => el !== undefined)) {
         joinNodes(root)
       } else {
         if (!parent) {
@@ -189,6 +222,10 @@ const RadixTree = module.exports = class RadixTree {
     }
   }
 
+  /**
+   * creates a merkle root for the current tree
+   * @returns {Promise}
+   */
   createMerkleRoot () {
     return this.graph.flush(this.root)
   }
@@ -197,16 +234,35 @@ const RadixTree = module.exports = class RadixTree {
     if (typeof key === 'string') {
       key = encoder.encode(key)
     }
-    return new RadixTree.ArrayConstructor(key.buffer)
+
+    if (key.constructor !== RadixTree.ArrayConstructor) {
+      return new RadixTree.ArrayConstructor(key.buffer)
+    } else {
+      return key
+    }
   }
 }
 
+function createNode (ex, branch, value) {
+  const node = {
+    '/': []
+  }
+
+  setValue(node, value)
+  setExtension(node, ex)
+  setBranch(node, branch)
+
+  return node
+}
+
+// helper functions for nodes
 function setBranch (node, branch) {
-  node['/'][BRANCH] = branch
+  node['/'][LBRANCH] = branch[0]
+  node['/'][RBRANCH] = branch[1]
 }
 
 function getBranch (node) {
-  return node['/'][BRANCH]
+  return node['/'].slice(LBRANCH, 2)
 }
 
 function getValue (node) {
@@ -217,12 +273,12 @@ function deleteValue (node) {
   node['/'].pop()
 }
 
-function hasExtension (node) {
-  return node['/'][EXTENSION].length === 2
-}
-
 function getExtension (node) {
-  return RadixTree.toTypedArray(node['/'][EXTENSION][1]).subarray(0, getExLength(node))
+  if (node['/'][EXTENSION]) {
+    return RadixTree.toTypedArray(node['/'][EXTENSION][1]).subarray(0, getExLength(node))
+  } else {
+    return []
+  }
 }
 
 function getExLength (node) {
@@ -233,27 +289,16 @@ function setExtension (node, ex) {
   if (ex && ex.length) {
     node['/'][EXTENSION] = [ex.length, new Buffer(ex.buffer)]
   } else {
-    node['/'][EXTENSION] = []
+    if (getValue(node) === undefined && node['/'][EXTENSION] !== undefined) {
+      node['/'].pop()
+    } else if (node['/'][EXTENSION] !== undefined) {
+      node['/'][EXTENSION] = undefined
+    }
   }
 }
 
 function setValue (node, val) {
-  node['/'][VALUE] = val
-}
-
-function createNode (ex, branch, value) {
-  if (ex && ex.length) {
-    ex = [ex.length, new Buffer(ex.buffer)]
-  } else {
-    ex = []
+  if (val !== undefined) {
+    node['/'][VALUE] = val
   }
-
-  const node = {
-    '/': [ex, branch]
-  }
-
-  if (value !== undefined) {
-    node['/'].push(value)
-  }
-  return node
 }

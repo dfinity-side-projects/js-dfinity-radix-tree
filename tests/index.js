@@ -59,36 +59,17 @@ node.on('ready', () => {
       dag: node.dag
     })
 
-    let key0 = new RadixTree.ArrayConstructor([1, 1, 0, 0])
+    let key0 = new RadixTree.ArrayConstructor([1, 1])
     await tree.set(key0, 'cat')
-    let key1 = new RadixTree.ArrayConstructor([0, 1, 0, 1])
+    let key1 = new RadixTree.ArrayConstructor([0, 1])
     await tree.set(key1, 'cat2')
-    let val = await tree.get(key0)
-    t.equals(val, 'cat')
 
-    val = await tree.get(key1)
-    t.equals(val, 'cat2')
+    let key2 = new RadixTree.ArrayConstructor([1, 0])
+    await tree.set(key2, 'cat')
+    let key3 = new RadixTree.ArrayConstructor([0, 0])
+    await tree.set(key3, 'cat3')
+    // console.log(JSON.stringify(tree.root, null, 2))
 
-    let key3 = new RadixTree.ArrayConstructor([0, 1, 0, 1, 1])
-    await tree.set(key3, 'test')
-    val = await tree.get(key3)
-
-    t.equals(val, 'test')
-
-    let key4 = new RadixTree.ArrayConstructor([0, 1, 0, 0, 0])
-    await tree.set(key4, 'dog')
-    val = await tree.get(key4)
-
-    let key5 = new RadixTree.ArrayConstructor([0, 1, 1, 0, 0])
-    await tree.set(key5, 'dog2')
-    val = await tree.get(key5)
-    t.equals(val, 'dog2')
-
-    await tree.delete(key0)
-
-    console.log(JSON.stringify(tree.root, null, 2))
-    val = await tree.get(key5)
-    t.equals(val, 'dog2')
     t.end()
   })
 
@@ -135,14 +116,28 @@ node.on('ready', () => {
     t.end()
   })
 
-  tape('falures', async t => {
+  tape('random', async t => {
     const tree = new RadixTree({
       dag: node.dag
     })
-    const key = crypto.createHash('sha256').update((0).toString()).digest().slice(0, 20)
-    await tree.set(key, 0)
-    const value = await tree.get(key)
-    t.equals(value, 0)
+    const entries = 100
+    for (let i = 0; i < entries; i++) {
+      const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+      await tree.set(key, i)
+    }
+
+    for (let i = 0; i < entries; i++) {
+      const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+      const value = await tree.get(key)
+      t.equals(value, i)
+    }
+
+    for (let i = 0; i < entries; i++) {
+      const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+      await tree.delete(key)
+    }
+
+    t.equals(tree.root['/'], undefined)
 
     t.end()
   })
