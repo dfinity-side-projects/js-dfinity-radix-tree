@@ -1,4 +1,5 @@
 const tape = require('tape')
+const crypto = require('crypto')
 const IPFS = require('ipfs')
 const RadixTree = require('../')
 
@@ -12,6 +13,7 @@ node.on('ready', () => {
     let tree = new RadixTree({
       dag: node.dag
     })
+
     await tree.set('test', 'cat')
     let val = await tree.get('test')
     t.equals(val, 'cat')
@@ -31,7 +33,7 @@ node.on('ready', () => {
     val = await tree.get('test')
     t.equals(val, 'cat111')
 
-    const stateRoot = await tree.flush()
+    const stateRoot = await tree.createMerkleRoot()
 
     // try reteriving node from ipfs
     tree = new RadixTree({
@@ -47,7 +49,7 @@ node.on('ready', () => {
 
     val = await tree.get('test')
     t.equals(val, 'cat111')
-    console.log(JSON.stringify(tree.root, null, 2))
+    // console.log(JSON.stringify(tree.root, null, 2))
 
     t.end()
   })
@@ -76,7 +78,17 @@ node.on('ready', () => {
     let key4 = new RadixTree.ArrayConstructor([0, 1, 0, 0, 0])
     await tree.set(key4, 'dog')
     val = await tree.get(key4)
-    t.equals(val, 'dog')
+
+    let key5 = new RadixTree.ArrayConstructor([0, 1, 1, 0, 0])
+    await tree.set(key5, 'dog2')
+    val = await tree.get(key5)
+    t.equals(val, 'dog2')
+
+    await tree.delete(key0)
+
+    console.log(JSON.stringify(tree.root, null, 2))
+    val = await tree.get(key5)
+    t.equals(val, 'dog2')
     t.end()
   })
 
@@ -90,7 +102,7 @@ node.on('ready', () => {
       await tree.delete('te')
       await tree.delete('test')
       await tree.delete('ter')
-      t.equals(tree.root['/'], null)
+      t.equals(tree.root['/'], undefined)
 
       // tests delete midle branchs
       await tree.set('test', 'cat')
@@ -105,7 +117,7 @@ node.on('ready', () => {
       await tree.delete('ter')
       await tree.delete('te')
       await tree.delete('test')
-      t.equals(tree.root['/'], null)
+      t.equals(tree.root['/'], undefined)
     } catch (e) {
       console.log(e)
     }
@@ -120,6 +132,18 @@ node.on('ready', () => {
     await tree.set('test', saved)
     const value = await tree.get('test')
     t.equals(value.toString(), saved.toString())
+    t.end()
+  })
+
+  tape('falures', async t => {
+    const tree = new RadixTree({
+      dag: node.dag
+    })
+    const key = crypto.createHash('sha256').update((0).toString()).digest().slice(0, 20)
+    await tree.set(key, 0)
+    const value = await tree.get(key)
+    t.equals(value, 0)
+
     t.end()
   })
 })

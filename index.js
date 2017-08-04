@@ -10,7 +10,7 @@ const VALUE = 2
 
 const RadixTree = module.exports = class RadixTree {
   constructor (opts) {
-    this.root = opts.root || {'/': null}
+    this.root = opts.root || {'/': undefined}
     this.graph = opts.graph || new Graph(opts.dag)
   }
 
@@ -101,7 +101,7 @@ const RadixTree = module.exports = class RadixTree {
     }
 
     // initial set
-    if (this.root['/'] === null) {
+    if (this.root['/'] === undefined) {
       this.root['/'] = createNode(key, [], value)['/']
     } else {
       const result = await this._get(key)
@@ -150,10 +150,10 @@ const RadixTree = module.exports = class RadixTree {
         joinNodes(root)
       } else {
         if (!parent) {
-          root['/'] = null
+          root['/'] = undefined
         } else {
           let branch = getBranch(parent)
-          branch = branch.map(node => node === root ? null : node)
+          branch = branch.map(node => node === root ? undefined : node)
           setBranch(parent, branch)
 
           joinNodes(parent)
@@ -189,7 +189,7 @@ const RadixTree = module.exports = class RadixTree {
     }
   }
 
-  flush () {
+  createMerkleRoot () {
     return this.graph.flush(this.root)
   }
 
