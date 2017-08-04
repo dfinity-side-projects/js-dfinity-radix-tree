@@ -223,10 +223,10 @@ const RadixTree = module.exports = class RadixTree {
   }
 
   /**
-   * creates a merkle root for the current tree
+   * creates a merkle root for the current tree and stores the data perstantly
    * @returns {Promise}
    */
-  createMerkleRoot () {
+  flush () {
     return this.graph.flush(this.root)
   }
 

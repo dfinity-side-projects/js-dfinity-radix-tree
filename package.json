@@ -1,17 +1,17 @@
 {
-  "name": "ipld-radix-tree",
+  "name": "merkle-radix-tree",
   "version": "0.0.0",
-  "description": "",
+  "description": "This implements a binary merkle radix tree",
   "main": "index.js",
   "scripts": {
-    "coverage": "node --expose-wasm --harmony ./node_modules/istanbul/lib/cli.js cover ./tests/index.js",
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./tests/index.js",
     "coveralls": "npm run coverage && coveralls <coverage/lcov.info",
     "lint": "standard",
-    "test": "node --expose-wasm --harmony ./tests/index.js"
+    "test": "node ./tests/index.js"
   },
   "author": "mjbecze <mjbecze@gmail.com>",
   "license": "MPL-2.0",
-  "keywords": [],
+  "keywords": ["merkle", "tree", "ipfs"],
   "devDependencies": {
     "coveralls": "^2.13.1",
     "ipfs": "^0.25.0",

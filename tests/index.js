@@ -33,7 +33,7 @@ node.on('ready', () => {
     val = await tree.get('test')
     t.equals(val, 'cat111')
 
-    const stateRoot = await tree.createMerkleRoot()
+    const stateRoot = await tree.flush()
 
     // try reteriving node from ipfs
     tree = new RadixTree({
@@ -68,6 +68,15 @@ node.on('ready', () => {
     await tree.set(key2, 'cat')
     let key3 = new RadixTree.ArrayConstructor([0, 0])
     await tree.set(key3, 'cat3')
+
+    let val = await tree.get(key0)
+    t.equals(val, 'cat')
+    val = await tree.get(key1)
+    t.equals(val, 'cat2')
+    val = await tree.get(key2)
+    t.equals(val, 'cat')
+    val = await tree.get(key3)
+    t.equals(val, 'cat3')
     // console.log(JSON.stringify(tree.root, null, 2))
 
     t.end()
