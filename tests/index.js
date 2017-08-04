@@ -118,7 +118,7 @@ node.on('ready', () => {
     const tree = new RadixTree({
       dag: node.dag
     })
-    const saved = new Buffer(33).fill(1)
+    const saved = Buffer.alloc(33).fill(1)
     await tree.set('test', saved)
     const value = await tree.get('test')
     t.equals(value.toString(), saved.toString())
