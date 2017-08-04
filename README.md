@@ -65,7 +65,7 @@ node.on('ready', async () => {
 The result of the benchmarks show that the binary radix tree produces proofs on
 average %67 small then the Ethereum Trie with 100000 keys stored.
 
-['./benchmarks/benchmarks.md']('./benchmarks/benchmarks.md')
+['./benchmarks/benchmarks.md'](./benchmarks/benchmarks.md)
 
 # TESTS
 `npm run tests`
