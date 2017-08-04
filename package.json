@@ -36,6 +36,7 @@
       "/benchmark/"
     ]
   },
-  "homepage": "https://github.com/wanderer/merkle-radix-tree",
-  "issues": "https://github.com/wanderer/merkle-radix-tree/issues"
+  "bugs": {
+    "url": "https://github.com/wanderer/merkle-radix-tree/issues"
+  }
 }
