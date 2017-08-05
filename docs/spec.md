@@ -23,7 +23,8 @@ If no value and no extension exists at a given node the array is truncated to
 node : = [LBRANCH, RBRANCH]
 ```
 
-All empty values in the array are encoded as "undefined"
+All empty values in the array are encoded as "undefined".
+An emty tree is defined as `{'/': undefined}`
 
 ## Branches
 Branch are merkle link defined in the [IPLD format](https://github.com/ipld/specs/tree/master/ipld#what-is-a-merkle-link)
