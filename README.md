@@ -10,9 +10,10 @@
 # SYNOPSIS 
 This implements a binary merkle radix tree. The point of using a binary radix
 tree is that it generates smaller proof size then trees with larger radixes.
-This tree is well suited for storing large dictonaries of fairly random keys. If
-the keys are not random better performance can be achived by hashing them first.
-It builds on top of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder)
+This tree is well suited for storing large dictonaries of fairly random keys.
+And is optimized for storing keys of the same length. If the keys are not 
+random better performance can be achived by hashing them first.It builds on 
+top of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder)
 and the resulting state and proofs are generated using it.
 
 # INSTALL
