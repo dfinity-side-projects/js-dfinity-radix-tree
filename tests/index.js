@@ -92,7 +92,7 @@ node.on('ready', () => {
       await tree.delete('te')
       await tree.delete('test')
       await tree.delete('ter')
-      t.equals(tree.root['/'], undefined)
+      t.deepEquals(tree.root['/'], [undefined, undefined])
 
       // tests delete midle branchs
       await tree.set('test', 'cat')
@@ -107,7 +107,7 @@ node.on('ready', () => {
       await tree.delete('ter')
       await tree.delete('te')
       await tree.delete('test')
-      t.equals(tree.root['/'], undefined)
+      t.deepEquals(tree.root['/'], [undefined, undefined])
     } catch (e) {
       console.log(e)
     }
@@ -146,7 +146,7 @@ node.on('ready', () => {
       await tree.delete(key)
     }
 
-    t.equals(tree.root['/'], undefined)
+    t.deepEquals(tree.root['/'], [undefined, undefined])
 
     t.end()
   })

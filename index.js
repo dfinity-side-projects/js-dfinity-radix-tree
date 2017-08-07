@@ -5,11 +5,6 @@ const TextEncoder = require('text-encoding').TextEncoder
 
 const encoder = new TextEncoder('utf-8')
 
-const LBRANCH = 0
-const RBRANCH = 1
-const EXTENSION = 2
-const VALUE = 3
-
 const RadixTree = module.exports = class RadixTree {
   /**
    * @param opts
@@ -18,8 +13,15 @@ const RadixTree = module.exports = class RadixTree {
    * @param opts.dag {object} an instance if [ipfs.dag](https://github.com/ipfs/js-ipfs#dag). If there is no `opts.graph` this will be used to create a new graph instance.
    */
   constructor (opts) {
-    this.root = opts.root || {'/': undefined}
+    this.root = opts.root || {'/': RadixTree.emptyTreeState}
     this.graph = opts.graph || new Graph(opts.dag)
+  }
+
+  /**
+   * returns the state of an empty tree
+   */
+  static get emptyTreeState () {
+    return [undefined, undefined]
   }
 
   /**
@@ -43,13 +45,14 @@ const RadixTree = module.exports = class RadixTree {
     let index = 0
     let root = this.root
     let parent
+
     while (1) {
       // load the root
       const exNode = await this.graph.get(root, EXTENSION, true)
       if (exNode) {
         let extensionIndex = 0
-        const extensionLen = getExLength(root)
         const extension = getExtension(root)
+        const extensionLen = extension.length
         let subKey
         subKey = key.slice(index, index + extensionLen)
 
@@ -127,40 +130,35 @@ const RadixTree = module.exports = class RadixTree {
       value = {'/': value}
     }
 
-    // initial set
-    if (this.root['/'] === undefined) {
-      this.root['/'] = createNode(key, [], value)['/']
+    const result = await this._get(key)
+    let root = result.root
+
+    if (result.value) {
+      setValue(root, value)
     } else {
-      const result = await this._get(key)
-      let root = result.root
+      if (result.extensionIndex !== undefined) {
+        // split the extension node in two
+        let extension = getExtension(root)
+        const extensionKey = extension[result.extensionIndex]
+        const remExtension = extension.subarray(result.extensionIndex + 1)
+        extension = extension.subarray(0, result.extensionIndex)
 
-      if (result.value) {
-        setValue(root, value)
+        setExtension(root, remExtension)
+        const branch = []
+        branch[extensionKey] = {'/': root['/']}
+        root['/'] = createNode(extension, branch)['/']
+      }
+
+      // if there are remaning key segments create an extension node
+      if (result.index < key.length) {
+        const keySegment = key[result.index]
+        const extension = key.subarray(result.index + 1, key.length)
+        const newNode = createNode(extension, [], value)
+        const rootBranch = getBranch(root)
+        rootBranch[keySegment] = newNode
+        setBranch(root, rootBranch)
       } else {
-        if (result.extensionIndex !== undefined) {
-          // split the extension node in two
-          let extension = getExtension(root)
-          const extensionKey = extension[result.extensionIndex]
-          const remExtension = extension.subarray(result.extensionIndex + 1)
-          extension = extension.subarray(0, result.extensionIndex)
-
-          setExtension(root, remExtension)
-          const branch = []
-          branch[extensionKey] = {'/': root['/']}
-          root['/'] = createNode(extension, branch)['/']
-        }
-
-        // if there are remaning key segments create an extension node
-        if (result.index < key.length) {
-          const keySegment = key[result.index]
-          const extension = key.subarray(result.index + 1, key.length)
-          const newNode = createNode(extension, [], value)
-          const rootBranch = getBranch(root)
-          rootBranch[keySegment] = newNode
-          setBranch(root, rootBranch)
-        } else {
-          setValue(root, value)
-        }
+        setValue(root, value)
       }
     }
   }
@@ -184,7 +182,7 @@ const RadixTree = module.exports = class RadixTree {
         joinNodes(root)
       } else {
         if (!parent) {
-          root['/'] = undefined
+          root['/'] = RadixTree.emptyTreeState
         } else {
           let branch = getBranch(parent)
           branch = branch.map(node => node === root ? undefined : node)
@@ -257,6 +255,11 @@ function createNode (ex, branch, value) {
 }
 
 // helper functions for nodes
+const LBRANCH = 0
+const RBRANCH = 1
+const EXTENSION = 2
+const VALUE = 3
+
 function setBranch (node, branch) {
   node['/'][LBRANCH] = branch[0]
   node['/'][RBRANCH] = branch[1]
@@ -276,14 +279,11 @@ function deleteValue (node) {
 
 function getExtension (node) {
   if (node['/'][EXTENSION]) {
-    return RadixTree.toTypedArray(node['/'][EXTENSION][1]).subarray(0, getExLength(node))
+    const len = node['/'][EXTENSION][0]
+    return RadixTree.toTypedArray(node['/'][EXTENSION][1]).subarray(0, len)
   } else {
     return []
   }
-}
-
-function getExLength (node) {
-  return node['/'][EXTENSION][0]
 }
 
 function setExtension (node, ex) {
