@@ -284,7 +284,8 @@ function deleteValue (node) {
 function getExtension (node) {
   if (node['/'][EXTENSION]) {
     const len = node['/'][EXTENSION][0]
-    return RadixTree.toTypedArray(node['/'][EXTENSION][1]).subarray(0, len)
+    const extension = RadixTree.toTypedArray(node['/'][EXTENSION].subarray(1))
+    return extension.subarray(0, extension.length - len)
   } else {
     return []
   }
@@ -292,7 +293,8 @@ function getExtension (node) {
 
 function setExtension (node, ex) {
   if (ex && ex.length) {
-    node['/'][EXTENSION] = [ex.length, Buffer.from(ex.buffer)]
+    const paddingLen = ((8 - (ex.length % 8)) % 8)
+    node['/'][EXTENSION] = Buffer.concat([Buffer.from([paddingLen]), Buffer.from(ex.buffer)])
   } else {
     if (getValue(node) === undefined && node['/'][EXTENSION] !== undefined) {
       node['/'].pop()

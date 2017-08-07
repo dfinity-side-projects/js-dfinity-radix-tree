@@ -16,7 +16,7 @@ node.on('ready', async () => {
     // root: { '/': 'zdpuArkpWFfw49S1tNLY26YNkHCoKt2CG7rJ6iCaqkcwsGqH7' }
   })
 
-  const entries = 100000 //5117051
+  const entries = 10000 // 5117051
   console.log('entries', entries)
   for (let i = 0; i < entries; i++) {
     const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)

@@ -64,7 +64,6 @@ node.on('ready', () => {
     let key1 = new RadixTree.ArrayConstructor([0, 1])
     await tree.set(key1, 'cat2')
 
-    // console.log(JSON.stringify(tree.root, null, 2))
     let key2 = new RadixTree.ArrayConstructor([1, 0])
     await tree.set(key2, 'cat')
     let key3 = new RadixTree.ArrayConstructor([0, 0])
@@ -140,6 +139,7 @@ node.on('ready', () => {
       const value = await tree.get(key)
       t.equals(value, i)
     }
+    // console.log(JSON.stringify(tree.root, null, 2))
 
     for (let i = 0; i < entries; i++) {
       const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
