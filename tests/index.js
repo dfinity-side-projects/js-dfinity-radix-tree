@@ -91,7 +91,7 @@ node.on('ready', () => {
       await tree.delete('te')
       await tree.delete('test')
       await tree.delete('ter')
-      t.deepEquals(tree.root['/'], [undefined, undefined])
+      t.deepEquals(tree.root['/'], [null, null])
 
       // tests delete midle branchs
       await tree.set('test', 'cat')
@@ -106,7 +106,7 @@ node.on('ready', () => {
       await tree.delete('ter')
       await tree.delete('te')
       await tree.delete('test')
-      t.deepEquals(tree.root['/'], [undefined, undefined])
+      t.deepEquals(tree.root['/'], [null, null])
     } catch (e) {
       console.log(e)
     }
@@ -139,14 +139,13 @@ node.on('ready', () => {
       const value = await tree.get(key)
       t.equals(value, i)
     }
-    // console.log(JSON.stringify(tree.root, null, 2))
 
     for (let i = 0; i < entries; i++) {
       const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
       await tree.delete(key)
     }
 
-    t.deepEquals(tree.root['/'], [undefined, undefined])
+    t.deepEquals(tree.root['/'], [null, null])
 
     t.end()
   })

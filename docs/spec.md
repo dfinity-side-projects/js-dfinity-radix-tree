@@ -23,8 +23,8 @@ If no value and no extension exists at a given node the array is truncated to
 node : = [LBRANCH, RBRANCH]
 ```
 
-All empty values in the array are encoded as "undefined".
-An emty tree is defined as `[undefined, undefined]`
+All empty values in the array are encoded as "null".
+An emty tree is defined as `[null, null]`
 
 ## Branches
 
@@ -50,7 +50,7 @@ For example if the binary keys [0, 0, 1, 1] and
 the tree the root node would have an extension of [0, 0]
 
 ```
-root := [undefined, <link>, [2, 0x00]]
+root := [null, <link>, [2, 0x00]]
 ```
 
 

@@ -21,7 +21,7 @@ const RadixTree = module.exports = class RadixTree {
    * returns the state of an empty tree
    */
   static get emptyTreeState () {
-    return [undefined, undefined]
+    return [null, null]
   }
 
   /**
@@ -131,7 +131,7 @@ const RadixTree = module.exports = class RadixTree {
     }
 
     if (isEmpty(this.root)) {
-      this.root['/'] = createNode(key, [], value)['/']
+      this.root['/'] = createNode(key, [null, null], value)['/']
     } else {
       const result = await this._get(key)
       let root = result.root
@@ -147,7 +147,7 @@ const RadixTree = module.exports = class RadixTree {
           extension = extension.subarray(0, result.extensionIndex)
 
           setExtension(root, remExtension)
-          const branch = []
+          const branch = [null, null]
           branch[extensionKey] = {'/': root['/']}
           root['/'] = createNode(extension, branch)['/']
         }
@@ -156,7 +156,7 @@ const RadixTree = module.exports = class RadixTree {
         if (result.index < key.length) {
           const keySegment = key[result.index]
           const extension = key.subarray(result.index + 1, key.length)
-          const newNode = createNode(extension, [], value)
+          const newNode = createNode(extension, [null, null], value)
           const rootBranch = getBranch(root)
           rootBranch[keySegment] = newNode
           setBranch(root, rootBranch)
@@ -182,14 +182,14 @@ const RadixTree = module.exports = class RadixTree {
       deleteValue(root)
 
       const branch = getBranch(root)
-      if (branch.some(el => el !== undefined)) {
+      if (branch.some(el => el !== null)) {
         joinNodes(root)
       } else {
         if (!parent) {
           root['/'] = RadixTree.emptyTreeState
         } else {
           let branch = getBranch(parent)
-          branch = branch.map(node => node === root ? undefined : node)
+          branch = branch.map(node => node === root ? null : node)
           setBranch(parent, branch)
 
           joinNodes(parent)
@@ -296,10 +296,10 @@ function setExtension (node, ex) {
     const paddingLen = ((8 - (ex.length % 8)) % 8)
     node['/'][EXTENSION] = Buffer.concat([Buffer.from([paddingLen]), Buffer.from(ex.buffer)])
   } else {
-    if (getValue(node) === undefined && node['/'][EXTENSION] !== undefined) {
+    if (getValue(node) === undefined && !Array.isArray(node['/'][EXTENSION])) {
       node['/'].pop()
     } else if (node['/'][EXTENSION] !== undefined) {
-      node['/'][EXTENSION] = undefined
+      node['/'][EXTENSION] = null
     }
   }
 }
@@ -312,5 +312,5 @@ function setValue (node, val) {
 
 function isEmpty (node) {
   const branch = getBranch(node)
-  return node['/'].length === 2 && branch[0] === undefined && branch[1] === undefined
+  return node['/'].length === 2 && branch[0] === null && branch[1] === null
 }
