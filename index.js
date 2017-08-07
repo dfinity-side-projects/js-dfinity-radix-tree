@@ -130,35 +130,39 @@ const RadixTree = module.exports = class RadixTree {
       value = {'/': value}
     }
 
-    const result = await this._get(key)
-    let root = result.root
-
-    if (result.value) {
-      setValue(root, value)
+    if (isEmpty(this.root)) {
+      this.root['/'] = createNode(key, [], value)['/']
     } else {
-      if (result.extensionIndex !== undefined) {
-        // split the extension node in two
-        let extension = getExtension(root)
-        const extensionKey = extension[result.extensionIndex]
-        const remExtension = extension.subarray(result.extensionIndex + 1)
-        extension = extension.subarray(0, result.extensionIndex)
+      const result = await this._get(key)
+      let root = result.root
 
-        setExtension(root, remExtension)
-        const branch = []
-        branch[extensionKey] = {'/': root['/']}
-        root['/'] = createNode(extension, branch)['/']
-      }
-
-      // if there are remaning key segments create an extension node
-      if (result.index < key.length) {
-        const keySegment = key[result.index]
-        const extension = key.subarray(result.index + 1, key.length)
-        const newNode = createNode(extension, [], value)
-        const rootBranch = getBranch(root)
-        rootBranch[keySegment] = newNode
-        setBranch(root, rootBranch)
-      } else {
+      if (result.value) {
         setValue(root, value)
+      } else {
+        if (result.extensionIndex !== undefined) {
+          // split the extension node in two
+          let extension = getExtension(root)
+          const extensionKey = extension[result.extensionIndex]
+          const remExtension = extension.subarray(result.extensionIndex + 1)
+          extension = extension.subarray(0, result.extensionIndex)
+
+          setExtension(root, remExtension)
+          const branch = []
+          branch[extensionKey] = {'/': root['/']}
+          root['/'] = createNode(extension, branch)['/']
+        }
+
+        // if there are remaning key segments create an extension node
+        if (result.index < key.length) {
+          const keySegment = key[result.index]
+          const extension = key.subarray(result.index + 1, key.length)
+          const newNode = createNode(extension, [], value)
+          const rootBranch = getBranch(root)
+          rootBranch[keySegment] = newNode
+          setBranch(root, rootBranch)
+        } else {
+          setValue(root, value)
+        }
       }
     }
   }
@@ -302,4 +306,9 @@ function setValue (node, val) {
   if (val !== undefined) {
     node['/'][VALUE] = val
   }
+}
+
+function isEmpty (node) {
+  const branch = getBranch(node)
+  return node['/'].length === 2 && branch[0] === undefined && branch[1] === undefined
 }

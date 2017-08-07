@@ -64,6 +64,7 @@ node.on('ready', () => {
     let key1 = new RadixTree.ArrayConstructor([0, 1])
     await tree.set(key1, 'cat2')
 
+    // console.log(JSON.stringify(tree.root, null, 2))
     let key2 = new RadixTree.ArrayConstructor([1, 0])
     await tree.set(key2, 'cat')
     let key3 = new RadixTree.ArrayConstructor([0, 0])
@@ -77,7 +78,6 @@ node.on('ready', () => {
     t.equals(val, 'cat')
     val = await tree.get(key3)
     t.equals(val, 'cat3')
-    // console.log(JSON.stringify(tree.root, null, 2))
 
     t.end()
   })
