@@ -24,13 +24,13 @@ node : = [LBRANCH, RBRANCH]
 ```
 
 All empty values in the array are encoded as "undefined".
-An emty tree is defined as `{'/': undefined}`
+An emty tree is defined as `{}`
 
 ## Branches
-Branch are merkle link defined in the [IPLD format](https://github.com/ipld/specs/tree/master/ipld#what-is-a-merkle-link)
+
 Each link points to the next node in the tree.
 ```
-branch : = {'/': <merkle link>}
+branch : = <merkle link>
 ```
 Where the link is a [CID](https://github.com/ipld/cid) is encoded as a byte string.
 Using CIDs allow for the flexablity to update the hashing algorithim and encoding
