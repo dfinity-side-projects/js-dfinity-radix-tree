@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "borc": "^2.0.2",
+    "lzma": "^2.3.2",
     "merkle-patricia-tree": "^2.2.0"
   }
 }
