@@ -24,7 +24,7 @@ node : = [LBRANCH, RBRANCH]
 ```
 
 All empty values in the array are encoded as "undefined".
-An emty tree is defined as `{}`
+An emty tree is defined as `[undefined, undefined]`
 
 ## Branches
 
