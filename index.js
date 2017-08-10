@@ -191,6 +191,7 @@ const RadixTree = module.exports = class RadixTree {
           let branch = getBranch(parent)
           branch = branch.map(node => node === root ? null : node)
           setBranch(parent, branch)
+          await this.graph.tree(parent, 2)
 
           joinNodes(parent)
         }

@@ -134,12 +134,15 @@ node.on('ready', () => {
       await tree.set(key, i)
     }
 
+    await tree.flush()
+
     for (let i = 0; i < entries; i++) {
       const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
       const value = await tree.get(key)
       t.equals(value, i)
     }
 
+    await tree.flush()
     for (let i = 0; i < entries; i++) {
       const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
       await tree.delete(key)
