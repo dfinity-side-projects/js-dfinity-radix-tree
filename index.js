@@ -54,7 +54,7 @@ const RadixTree = module.exports = class RadixTree {
         const extension = getExtension(root)
         const extensionLen = extension.length
         let subKey
-        subKey = key.slice(index, index + extensionLen)
+        subKey = key.subarray(index, index + extensionLen)
 
         // checks the extension against the key
         while (extensionIndex < extensionLen && extension[extensionIndex] === subKey[extensionIndex]) {
