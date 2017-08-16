@@ -50,23 +50,24 @@ const RadixTree = module.exports = class RadixTree {
       // load the root
       const exNode = await this.graph.get(root, EXTENSION, true)
       if (exNode) {
-        let extensionIndex = 0
-        const extension = getExtension(root)
-        const extensionLen = extension.length
-        let subKey
-        subKey = key.subarray(index, index + extensionLen)
+        let subKey = key.subarray(index)
 
-        // checks the extension against the key
-        while (extensionIndex < extensionLen && extension[extensionIndex] === subKey[extensionIndex]) {
-          extensionIndex++
-        }
+        // let extensionIndex = 0
+        // const extension = getExtension(root)
+        // const extensionLen = extension.length
+        // // checks the extension against the key
+        // while (extensionIndex < extensionLen && extension[extensionIndex] === subKey[extensionIndex]) {
+        //   extensionIndex++
+        // }
+        const {extensionIndex, extensionLen, extension} = findMatchBits(subKey, root)
         index += extensionIndex
         // check if we compelete travered the extension
         if (extensionIndex !== extensionLen) {
           return {
-            extensionIndex: extensionIndex,
+            index: index,
             root: root,
-            index: index
+            extension: extension,
+            extensionIndex: extensionIndex
           }
         }
       }
@@ -133,18 +134,16 @@ const RadixTree = module.exports = class RadixTree {
     if (isEmpty(this.root)) {
       this.root['/'] = createNode(key, [null, null], value)['/']
     } else {
-      const result = await this._get(key)
-      let root = result.root
+      let {root, extensionIndex, extension, index, value: rValue} = await this._get(key)
 
-      if (result.value) {
+      if (rValue) {
         setValue(root, value)
       } else {
-        if (result.extensionIndex !== undefined) {
+        if (extensionIndex !== undefined) {
           // split the extension node in two
-          let extension = getExtension(root)
-          const extensionKey = extension[result.extensionIndex]
-          const remExtension = extension.subarray(result.extensionIndex + 1)
-          extension = extension.subarray(0, result.extensionIndex)
+          const extensionKey = extension[extensionIndex]
+          const remExtension = extension.subarray(extensionIndex + 1)
+          extension = extension.subarray(0, extensionIndex)
 
           setExtension(root, remExtension)
           const branch = [null, null]
@@ -153,9 +152,9 @@ const RadixTree = module.exports = class RadixTree {
         }
 
         // if there are remaning key segments create an extension node
-        if (result.index < key.length) {
-          const keySegment = key[result.index]
-          const extension = key.subarray(result.index + 1, key.length)
+        if (index < key.length) {
+          const keySegment = key[index]
+          const extension = key.subarray(index + 1, key.length)
           const newNode = createNode(extension, [null, null], value)
           const rootBranch = getBranch(root)
           rootBranch[keySegment] = newNode
@@ -314,4 +313,21 @@ function setValue (node, val) {
 function isEmpty (node) {
   const branch = getBranch(node)
   return node['/'].length === 2 && branch[0] === null && branch[1] === null
+}
+
+function findMatchBits (key, node) {
+  let extensionIndex = 0
+  const extension = getExtension(node)
+  const extensionLen = extension.length
+
+  // checks the extension against the key
+  while (extensionIndex < extensionLen && extension[extensionIndex] === key[extensionIndex]) {
+    extensionIndex++
+  }
+
+  return {
+    extensionIndex: extensionIndex,
+    extensionLen: extensionLen,
+    extension: extension
+  }
 }
