@@ -1,6 +1,6 @@
 [![NPM Package](https://img.shields.io/npm/v/merkle-radix-tree.svg?style=flat-square)](https://www.npmjs.org/package/merkle-radix-tree)
-[![Build Status](https://img.shields.io/travis/wanderer/merkle-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/wanderer/merkle-radix-tree)
-[![Coverage Status](https://img.shields.io/coveralls/wanderer/merkle-radix-tree.svg?style=flat-square)](https://coveralls.io/wanderer/merkle-radix-tree)
+[![Build Status](https://img.shields.io/travis/primea/merkle-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/primea/merkle-radix-tree)
+[![Coverage Status](https://img.shields.io/coveralls/primea/merkle-radix-tree.svg?style=flat-square)](https://coveralls.io/primea/merkle-radix-tree)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
 
