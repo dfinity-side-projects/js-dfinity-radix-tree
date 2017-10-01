@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bn.js": "^4.11.8",
     "borc": "^2.0.2",
     "lzma": "^2.3.2",
     "merkle-patricia-tree": "^2.2.0"
