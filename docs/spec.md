@@ -75,7 +75,9 @@ A tree with a single key 'binary' and value of 'tree' is encoded as
 If an other key "bin" with the value "number" is add the tree will have two nodes
 
 The root node will be
-`0x0b1862696eaf39aa98eb0350611f230cbeb2e68dbe95ab5ecc6e756d626572`
+
+```
+0x0b1862696eaf39aa98eb0350611f230cbeb2e68dbe95ab5ecc6e756d626572
 
 0xb this node has an extention, a right branch and a value
 0x18 this the extention has a length of 24 bits
@@ -92,3 +94,4 @@ the link 0xaf39aa98eb0350611f230cbeb2e68dbe95ab5ecc points to the node
 0x30b93c the extention 'ary' = 0x617279 that is shift left one bit. 'a' is 0x61 which
 is read 100001100 (little endian) The was first bit is was used to choose the branch (right)
 turns into 0x30 (110000)
+```
