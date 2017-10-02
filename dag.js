@@ -5,10 +5,10 @@ const HASH_LEN = 20
 
 module.exports = class TreeDAG extends DAG {
   put (val, options) {
-    const encoded = treeNode.encode(val).toString('hex')
+    const encoded = treeNode.encode(val)
     const key = crypto.createHash('sha256').update(encoded).digest().slice(0, HASH_LEN)
     return new Promise((resolve, reject) => {
-      this._dag.put(key, encoded, () => {
+      this._dag.put(key, encoded.toString('hex'), () => {
         resolve(key)
       })
     })

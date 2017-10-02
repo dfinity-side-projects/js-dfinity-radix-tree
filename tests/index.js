@@ -45,7 +45,6 @@ tape('set and get', async t => {
   val = await tree.get('test')
   t.equals(val.toString(), 'cat111')
   // console.log(JSON.stringify(tree.root, null, 2))
-
   t.end()
 })
 
@@ -117,6 +116,21 @@ tape('large values', async t => {
   const value = await tree.get('test')
   t.equals(value.toString(), saved.toString())
   t.end()
+})
+
+tape('errors', async t => {
+  const tree = new RadixTree({
+    db: db,
+    root: {
+      '/': Buffer.alloc(20)
+    }
+  })
+
+  try {
+    await tree.get('test')
+  } catch (e) {
+    t.end()
+  }
 })
 
 tape('random', async t => {

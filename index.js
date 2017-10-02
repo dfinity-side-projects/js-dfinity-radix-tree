@@ -48,13 +48,6 @@ module.exports = class RadixTree {
       if (exNode) {
         let subKey = key.subarray(index)
 
-        // let extensionIndex = 0
-        // const extension = getExtension(root)
-        // const extensionLen = extension.length
-        // // checks the extension against the key
-        // while (extensionIndex < extensionLen && extension[extensionIndex] === subKey[extensionIndex]) {
-        //   extensionIndex++
-        // }
         const {extensionIndex, extensionLen, extension} = findMatchBits(subKey, root)
         index += extensionIndex
         // check if we compelete travered the extension
@@ -90,11 +83,7 @@ module.exports = class RadixTree {
       index++
     }
 
-    let value = treeNode.getValue(root)
-
-    if (value && value['/']) {
-      value = await this.graph.get(root, treeNode.VALUE, true)
-    }
+    const value = treeNode.getValue(root)
 
     return {
       value: value,
