@@ -19,6 +19,7 @@
     "dfinity"
   ],
   "devDependencies": {
+    "coveralls": "^3.0.0",
     "documentation": "^5.1.1",
     "level": "^1.7.0",
     "nyc": "^11.2.1",
