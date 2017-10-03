@@ -4,8 +4,8 @@
   "description": "This implements a binary merkle radix tree",
   "main": "index.js",
   "scripts": {
-    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./tests/index.js",
-    "coveralls": "npm run coverage && coveralls <coverage/lcov.info",
+    "coveralls": "npm run coverage && nyc report --reporter=text-lcov | coveralls",
+    "coverage": "nyc npm test",
     "lint": "standard",
     "test": "node ./tests/index.js",
     "build:docs": "documentation build ./index.js --github --sort-order source -f md  > ./docs/index.md"
@@ -18,7 +18,6 @@
     "ipfs"
   ],
   "devDependencies": {
-    "coveralls": "^2.13.1",
     "documentation": "^5.1.1",
     "level": "^1.7.0",
     "nyc": "^11.2.1",
@@ -26,10 +25,8 @@
     "tape": "^4.6.3"
   },
   "dependencies": {
-    "blakejs": "^1.1.0",
-    "ipld-graph-builder": "^1.2.4",
+    "ipld-graph-builder": "^1.3.3",
     "leb128": "0.0.2",
-    "node-webcrypto-ossl": "^1.0.31",
     "node-webcrypto-shim": "0.0.0",
     "safe-buffer": "^5.1.1",
     "text-encoding": "^0.6.4",

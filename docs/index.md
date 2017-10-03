@@ -7,23 +7,24 @@
 -   [set](#set)
 -   [delete](#delete)
 -   [flush](#flush)
+-   [emptyTreeState](#emptytreestate)
 -   [ArrayConstructor](#arrayconstructor)
--   [toTypedArray](#totypedarray)
 
 ## constructor
 
-[index.js:20-23](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L20-L23 "Source code on GitHub")
+[index.js:17-24](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L17-L24 "Source code on GitHub")
 
 **Parameters**
 
 -   `opts`  
     -   `opts.root`  {object} a merkle root to a radix tree. If none, RadixTree will create an new root.
+    -   `opts.db`  {object} a level db  instance alternitly `opts.graph` can be used
     -   `opts.graph`  {object} an instance of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder) alternitvly `opts.dag` can be used
     -   `opts.dag`  {object} an instance if [ipfs.dag](https://github.com/ipfs/js-ipfs#dag). If there is no `opts.graph` this will be used to create a new graph instance.
 
 ## get
 
-[index.js:112-116](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L112-L116 "Source code on GitHub")
+[index.js:102-106](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L102-L106 "Source code on GitHub")
 
 gets a value given a key
 
@@ -35,7 +36,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## set
 
-[index.js:123-166](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L123-L166 "Source code on GitHub")
+[index.js:113-149](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L113-L149 "Source code on GitHub")
 
 stores a value at a given key
 
@@ -48,7 +49,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## delete
 
-[index.js:173-224](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L173-L224 "Source code on GitHub")
+[index.js:156-208](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L156-L208 "Source code on GitHub")
 
 deletes a value at a given key
 
@@ -60,28 +61,22 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## flush
 
-[index.js:230-232](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L230-L232 "Source code on GitHub")
+[index.js:214-216](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L214-L216 "Source code on GitHub")
 
 creates a merkle root for the current tree and stores the data perstantly
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
 
+## emptyTreeState
+
+[index.js:29-31](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L29-L31 "Source code on GitHub")
+
+returns the state of an empty tree
+
 ## ArrayConstructor
 
-[index.js:29-31](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L29-L31 "Source code on GitHub")
+[index.js:37-39](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L37-L39 "Source code on GitHub")
 
 returns an Uint1Array constructir which is used to repersent keys
 
 Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
-
-## toTypedArray
-
-[index.js:38-40](https://github.com/wanderer/merkle-radix-tree/blob/c05ecac437698d9d42b13f01e4931e3d7469affe/index.js#L38-L40 "Source code on GitHub")
-
-converts a TypedArray or Buffer to an Uint1Array
-
-**Parameters**
-
--   `array` **[TypedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)** the array to convert
-
-Returns **[TypedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)** 
