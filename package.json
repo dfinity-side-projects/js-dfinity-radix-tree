@@ -15,7 +15,8 @@
   "keywords": [
     "merkle",
     "tree",
-    "ipfs"
+    "ipfs",
+    "dfinity"
   ],
   "devDependencies": {
     "documentation": "^5.1.1",
@@ -38,10 +39,10 @@
     ]
   },
   "bugs": {
-    "url": "https://github.com/wanderer/merkle-radix-tree/issues"
+    "url": "https://github.com/dfinity/js-dfinity-radix-tree/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wanderer/merkle-radix-tree.git"
+    "url": "git+https://github.com/dfinity/js-dfinity-radix-tree.git"
   }
 }
