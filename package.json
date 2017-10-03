@@ -20,16 +20,17 @@
   "devDependencies": {
     "coveralls": "^2.13.1",
     "documentation": "^5.1.1",
-    "ipfs": "^0.25.0",
-    "istanbul": "^1.1.0-alpha.1",
+    "level": "^1.7.0",
+    "nyc": "^11.2.1",
     "standard": "^10.0.0",
     "tape": "^4.6.3"
   },
   "dependencies": {
-    "borc": "^2.0.2",
+    "blakejs": "^1.1.0",
     "ipld-graph-builder": "^1.2.4",
     "leb128": "0.0.2",
-    "level": "^1.7.0",
+    "node-webcrypto-ossl": "^1.0.31",
+    "node-webcrypto-shim": "0.0.0",
     "safe-buffer": "^5.1.1",
     "text-encoding": "^0.6.4",
     "uint1array": "^1.0.5"

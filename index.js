@@ -1,7 +1,7 @@
 const Graph = require('ipld-graph-builder')
 const Uint1Array = require('uint1array')
 const TextEncoder = require('text-encoding').TextEncoder
-const DAG = require('./dag.js')
+const DataStore = require('./datastore.js')
 const treeNode = require('./treeNode.js')
 
 const encoder = new TextEncoder('utf-8')
@@ -10,6 +10,7 @@ module.exports = class RadixTree {
   /**
    * @param opts
    * @param opts.root {object} a merkle root to a radix tree. If none, RadixTree will create an new root.
+   * @param opts.db {object} a level db  instance alternitly `opts.graph` can be used
    * @param opts.graph {object} an instance of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder) alternitvly `opts.dag` can be used
    * @param opts.dag {object} an instance if [ipfs.dag](https://github.com/ipfs/js-ipfs#dag). If there is no `opts.graph` this will be used to create a new graph instance.
    */
@@ -18,7 +19,7 @@ module.exports = class RadixTree {
       '/': RadixTree.emptyTreeState
     }
 
-    this.dag = opts.dag || new DAG(opts.db)
+    this.dag = opts.dag || new DataStore(opts.db)
     this.graph = opts.graph || new Graph(this.dag)
   }
 

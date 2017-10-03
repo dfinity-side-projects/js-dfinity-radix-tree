@@ -100,7 +100,6 @@ exports.encode = function (node, prefix = 0, encodeLen = false) {
     const len = leb128.encode(encoded.length)
     encoded = Buffer.concat([len, encoded])
   }
-  console.log(encoded.toString('hex'))
   return encoded
 }
 

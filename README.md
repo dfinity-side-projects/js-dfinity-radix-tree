@@ -5,56 +5,51 @@
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
 
 # install
-`npm install merkle-radix-tree`
+`npm install js-dfinity-radix-tree`
 
 # SYNOPSIS 
 This implements a binary merkle radix tree. The point of using a binary radix
 tree is that it generates smaller proof size then trees with larger radixes.
 This tree is well suited for storing large dictonaries of fairly random keys.
 And is optimized for storing keys of the same length. If the keys are not 
-random better performance can be achived by hashing them first.It builds on 
+random better performance can be achived by hashing them first. It builds on 
 top of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder)
 and the resulting state and proofs are generated using it.
 
 # INSTALL
-`npm install merkle-radix-tree`
+`npm install js-dfinity-radix-tree`
 
 # USAGE
 
 ```javascript
-const IPFS = require('ipfs')
-const RadixTree = require('merkle-radix-tree')
+const RadixTree = require('js-dfinity-radix-tree')
+const level = require('level')
+const db = level('./tempdb')
 
-// start ipfs
-const node = new IPFS({
-  start: false,
-  repo: './ipfs-repo'
-})
-
-node.on('ready', async () => {
+async function main () {
   const prover = new RadixTree({
-    dag: node.dag
+    db: db
   })
 
-  // set some values
-  await prover.set('test', 'value')
-  await prover.set('doge', 'coin')
-  await prover.set('cat', 'dog')
-  await prover.set('monkey', 'wrench')
+  await prover.set('test', Buffer.from('value'))
+  await prover.set('doge', Buffer.from('coin'))
+  await prover.set('cat', Buffer.from('dog'))
+  await prover.set('monkey', Buffer.from('wrench'))
 
   // create a merkle root and save the tree
-  const merkleRoot = await prover.flush()
+  const merkleroot = await prover.flush()
 
   // start a new Instance with the root
   const verifier = new RadixTree({
-    dag: node.dag,
-    root: merkleRoot
+    db: db,
+    root: merkleroot
   })
 
-  // gets the merkle proof from ipfs-js and returns the result
   const val = await verifier.get('monkey')
-  console.log(val)
-})
+  console.log(val.toString())
+}
+
+main()
 ```
 # API
 ['./docs/'](./docs/index.md)
