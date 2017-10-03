@@ -1,11 +1,8 @@
-[![NPM Package](https://img.shields.io/npm/v/merkle-radix-tree.svg?style=flat-square)](https://www.npmjs.org/package/merkle-radix-tree)
-[![Build Status](https://img.shields.io/travis/primea/js-primea-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/primea/js-primea-radix-tree)
-[![Coverage Status](https://img.shields.io/coveralls/primea/js-primea-radix-tree.svg?style=flat-square)](https://coveralls.io/primea/js-primea-radix-tree)
+[![NPM Package](https://img.shields.io/npm/v/dfinit-radix-tree.svg?style=flat-square)](https://www.npmjs.org/package/dfinity-radix-tree)
+[![Build Status](https://img.shields.io/travis/primea/js-dfinity-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/primea/js-dfinity-radix-tree)
+[![Coverage Status](https://img.shields.io/coveralls/primea/js-dfinity-radix-tree.svg?style=flat-square)](https://coveralls.io/primea/js-dfinity-radix-tree)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
-
-# install
-`npm install js-dfinity-radix-tree`
 
 # SYNOPSIS 
 This implements a binary merkle radix tree. The point of using a binary radix
@@ -17,7 +14,7 @@ top of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder)
 and the resulting state and proofs are generated using it.
 
 # INSTALL
-`npm install js-dfinity-radix-tree`
+`npm install dfinity-radix-tree`
 
 # USAGE
 
