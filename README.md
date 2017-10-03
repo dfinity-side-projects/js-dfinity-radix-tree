@@ -1,6 +1,6 @@
-[![NPM Package](https://img.shields.io/npm/v/dfinit-radix-tree.svg?style=flat-square)](https://www.npmjs.org/package/dfinity-radix-tree)
-[![Build Status](https://img.shields.io/travis/primea/js-dfinity-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/primea/js-dfinity-radix-tree)
-[![Coverage Status](https://img.shields.io/coveralls/primea/js-dfinity-radix-tree.svg?style=flat-square)](https://coveralls.io/primea/js-dfinity-radix-tree)
+[![NPM Package](https://img.shields.io/npm/v/dfinity-radix-tree.svg?style=flat-square)](https://www.npmjs.org/package/dfinity-radix-tree)
+[![Build Status](https://img.shields.io/travis/dfinity/js-dfinity-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/dfinity/js-dfinity-radix-tree)
+[![Coverage Status](https://img.shields.io/coveralls/dfinity/js-dfinity-radix-tree.svg?style=flat-square)](https://coveralls.io/dfinity/js-dfinity-radix-tree)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
 
