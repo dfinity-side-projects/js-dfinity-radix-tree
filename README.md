@@ -1,6 +1,6 @@
 [![NPM Package](https://img.shields.io/npm/v/dfinity-radix-tree.svg?style=flat-square)](https://www.npmjs.org/package/dfinity-radix-tree)
 [![Build Status](https://img.shields.io/travis/dfinity/js-dfinity-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/dfinity/js-dfinity-radix-tree)
-[![Coverage Status](https://img.shields.io/coveralls/dfinity/js-dfinity-radix-tree.svg?style=flat-square)](https://coveralls.io/dfinity/js-dfinity-radix-tree)
+[![Coverage Status](https://img.shields.io/coveralls/dfinity/js-dfinity-radix-tree.svg?style=flat-square)](https://coveralls.io/dfinity/js-dfinity-radix-tree) 
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
 
@@ -66,4 +66,4 @@ average %67 small then the Ethereum Trie with 100000 keys stored.
 # LICENSE
 [MPL-2.0](https://tldrlegal.com/license/mozilla-public-license-2.0-(mpl-2))
 
-
+:evergreen_tree: 
