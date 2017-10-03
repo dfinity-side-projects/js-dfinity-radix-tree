@@ -96,10 +96,10 @@ exports.encode = function (node, prefix = 0, encodeLen = false) {
 
   encoded.unshift(Buffer.from([prefix]))
   encoded = Buffer.concat(encoded)
-  if (encodeLen) {
-    const len = leb128.encode(encoded.length)
-    encoded = Buffer.concat([len, encoded])
-  }
+  // if (encodeLen) {
+  //   const len = leb128.encode(encoded.length)
+  //   encoded = Buffer.concat([len, encoded])
+  // }
   return encoded
 }
 
