@@ -6,7 +6,6 @@
 
 # SYNOPSIS 
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/dfinity/js-dfinity-radix-tree.svg)](https://greenkeeper.io/)
 This implements a binary merkle radix tree. The point of using a binary radix
 tree is that it generates smaller proof size then trees with larger radixes.
 This tree is well suited for storing large dictonaries of fairly random keys.
