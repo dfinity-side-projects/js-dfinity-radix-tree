@@ -5,6 +5,10 @@ const RadixTree = require('../')
 const db = level('./testdb')
 
 tape('set and get', async t => {
+  const r = await RadixTree.getMerkleLink(Buffer.from([0]))
+
+  t.equal(r.toString('hex'), '6e340b9cffb37a989ca544e6bb780a2c78901d3f', 'should hash')
+
   let tree = new RadixTree({
     db: db
   })
@@ -79,31 +83,27 @@ tape('delete', async t => {
   const tree = new RadixTree({
     db: db
   })
-  try {
-    await tree.set('test', Buffer.from('cat'))
-    await tree.set('ter', Buffer.from('cat3'))
-    await tree.delete('te')
-    await tree.delete('test')
-    await tree.delete('ter')
-    t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
+  await tree.set('test', Buffer.from('cat'))
+  await tree.set('ter', Buffer.from('cat3'))
+  await tree.delete('te')
+  await tree.delete('test')
+  await tree.delete('ter')
+  t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
 
-    // tests delete midle branchs
-    await tree.set('test', Buffer.from('cat'))
-    await tree.set('te', Buffer.from('cat2'))
-    await tree.set('ter', Buffer.from('cat3'))
-    await tree.delete('te')
-    let val = await tree.get('test')
-    t.equals(val.toString(), 'cat')
+  // tests delete midle branchs
+  await tree.set('test', Buffer.from('cat'))
+  await tree.set('te', Buffer.from('cat2'))
+  await tree.set('ter', Buffer.from('cat3'))
+  await tree.delete('te')
+  let val = await tree.get('test')
+  t.equals(val.toString(), 'cat')
 
-    // tests delete end branchs
-    await tree.set('te', 'cat2')
-    await tree.delete('ter')
-    await tree.delete('te')
-    await tree.delete('test')
-    t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
-  } catch (e) {
-    console.log(e)
-  }
+  // tests delete end branchs
+  await tree.set('te', 'cat2')
+  await tree.delete('ter')
+  await tree.delete('te')
+  await tree.delete('test')
+  t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
   t.end()
 })
 

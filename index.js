@@ -38,6 +38,15 @@ module.exports = class RadixTree {
     return Uint1Array
   }
 
+  /**
+   * returns a merkle link for some given data
+   * @param {Buffer} data - the data which you would like to hash
+   * @returns {Buffer}
+   */
+  static getMerkleLink (data) {
+    return DataStore.getMerkleLink(data)
+  }
+
   async _get (key) {
     let index = 0
     let root = this.root
