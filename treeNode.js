@@ -1,3 +1,4 @@
+const borc = require('borc')
 const leb128 = require('leb128').unsigned
 const LebStream = require('leb128/stream')
 const Uint1Array = require('uint1array')
@@ -88,8 +89,11 @@ exports.encode = function (node, prefix = 0, encodeLen = false) {
     prefix += MASK.RBRANCH
   }
 
-  const val = node[VALUE]
+  let val = node[VALUE]
   if (val !== undefined) {
+    if (!Buffer.isBuffer(val)) {
+      val = borc.encode(val)
+    }
     encoded.push(val)
     prefix += MASK.VALUE
   }
