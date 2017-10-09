@@ -9,10 +9,11 @@
 -   [flush](#flush)
 -   [emptyTreeState](#emptytreestate)
 -   [ArrayConstructor](#arrayconstructor)
+-   [getMerkleLink](#getmerklelink)
 
 ## constructor
 
-[index.js:17-24](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L17-L24 "Source code on GitHub")
+[index.js:17-24](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L17-L24 "Source code on GitHub")
 
 **Parameters**
 
@@ -24,7 +25,7 @@
 
 ## get
 
-[index.js:102-106](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L102-L106 "Source code on GitHub")
+[index.js:111-115](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L111-L115 "Source code on GitHub")
 
 gets a value given a key
 
@@ -36,7 +37,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## set
 
-[index.js:113-149](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L113-L149 "Source code on GitHub")
+[index.js:122-158](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L122-L158 "Source code on GitHub")
 
 stores a value at a given key
 
@@ -49,7 +50,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## delete
 
-[index.js:156-208](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L156-L208 "Source code on GitHub")
+[index.js:165-217](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L165-L217 "Source code on GitHub")
 
 deletes a value at a given key
 
@@ -61,7 +62,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## flush
 
-[index.js:214-216](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L214-L216 "Source code on GitHub")
+[index.js:223-225](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L223-L225 "Source code on GitHub")
 
 creates a merkle root for the current tree and stores the data perstantly
 
@@ -69,14 +70,26 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ## emptyTreeState
 
-[index.js:29-31](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L29-L31 "Source code on GitHub")
+[index.js:29-31](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L29-L31 "Source code on GitHub")
 
 returns the state of an empty tree
 
 ## ArrayConstructor
 
-[index.js:37-39](https://github.com/wanderer/js-dfinity-radix-tree/blob/24407d385e0f7cc8eed70abe5a5e927a092ebe60/index.js#L37-L39 "Source code on GitHub")
+[index.js:37-39](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L37-L39 "Source code on GitHub")
 
 returns an Uint1Array constructir which is used to repersent keys
 
 Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+
+## getMerkleLink
+
+[index.js:46-48](https://github.com/dfinity/js-dfinity-radix-tree/blob/878e413eb6f1500a2c9f5c2fbe58014339f7652b/index.js#L46-L48 "Source code on GitHub")
+
+returns a merkle link for some given data
+
+**Parameters**
+
+-   `data` **[Buffer](https://nodejs.org/api/buffer.html)** the data which you would like to hash
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** 
