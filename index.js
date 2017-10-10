@@ -112,7 +112,7 @@ module.exports = class RadixTree {
   async get (key, decode) {
     key = RadixTree.formatKey(key)
     let {root, value} = await this._get(key)
-    if (decode) {
+    if (decode && Buffer.isBuffer(value)) {
       value = cbor.decode(value)
       treeNode.setValue(root, value)
     }
