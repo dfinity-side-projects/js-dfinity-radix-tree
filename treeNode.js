@@ -1,6 +1,6 @@
 const borc = require('borc')
 const leb128 = require('leb128').unsigned
-const LebStream = require('leb128/stream')
+const LebStream = require('buffer-pipe')
 const Uint1Array = require('uint1array')
 const HASH_LEN = 20
 
