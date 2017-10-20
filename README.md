@@ -43,8 +43,8 @@ async function main () {
     root: merkleroot
   })
 
-  const val = await verifier.get('monkey')
-  console.log(val.toString())
+  const {value} = await verifier.get('monkey')
+  console.log(value.toString())
 }
 
 main()

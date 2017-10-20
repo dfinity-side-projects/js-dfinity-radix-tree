@@ -105,7 +105,9 @@ module.exports = class RadixTree {
   }
 
   /**
-   * gets a value given a key
+   * gets a value given a key. The promise resolves with an object containing
+   * `node` the node in the merkle tree and `value` the value of the that the
+   * node contains
    * @param {*} key
    * @return {Promise}
    */
@@ -116,7 +118,7 @@ module.exports = class RadixTree {
       value = cbor.decode(value)
       treeNode.setValue(root, value)
     }
-    return value
+    return {node: root, value}
   }
 
   /**
@@ -143,7 +145,9 @@ module.exports = class RadixTree {
 
           treeNode.setExtension(root, remExtension)
           const branch = [null, null]
-          branch[extensionKey] = {'/': root['/']}
+          branch[extensionKey] = {
+            '/': root['/']
+          }
           root['/'] = createNode(extension, branch)['/']
         }
 
