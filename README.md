@@ -6,7 +6,7 @@
 
 # Synopsis
 
-This implements a binary merkle radix tree. The point of using a binary radix
+:evergreen_tree:  This implements a binary merkle radix tree. The point of using a binary radix
 tree is that it generates smaller proof size then trees with larger radixes.
 This tree is well suited for storing large dictonaries of fairly random keys.
 And is optimized for storing keys of the same length. If the keys are not 
@@ -68,5 +68,3 @@ average %67 small then the Ethereum Trie with 100000 keys stored.
 All code and designs are open sourced under GPL V3.
 
 ![image](https://user-images.githubusercontent.com/6457089/32753794-10f4cbc2-c883-11e7-8dcf-ff8088b38f9f.png)
-
-:evergreen_tree: 
