@@ -63,7 +63,7 @@ average %67 small then the Ethereum Trie with 100000 keys stored.
 
 ## License
 
-**(C) 2017 DFINITY STIFTUNG** (http://dfinity.network)
+[**(C) 2017 DFINITY STIFTUNG**](http://dfinity.network)
 
 All code and designs are open sourced under GPL V3.
 
