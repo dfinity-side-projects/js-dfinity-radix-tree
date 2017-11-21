@@ -4,7 +4,7 @@
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
 
-# SYNOPSIS 
+# Synopsis
 
 This implements a binary merkle radix tree. The point of using a binary radix
 tree is that it generates smaller proof size then trees with larger radixes.
@@ -14,10 +14,10 @@ random better performance can be achived by hashing them first. It builds on
 top of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder)
 and the resulting state and proofs are generated using it.
 
-# INSTALL
+## Install
 `npm install dfinity-radix-tree`
 
-# USAGE
+## Usage
 
 ```javascript
 const RadixTree = require('js-dfinity-radix-tree')
@@ -49,22 +49,24 @@ async function main () {
 
 main()
 ```
-# API
+## API
 ['./docs/'](./docs/index.md)
 
-# SPEC
+## Spefication
 ['./docs/spec.md'](./docs/spec.md)
 
-# BENCHMARKS
+## Benchmarks
 The result of the benchmarks show that the binary radix tree produces proofs on
 average %67 small then the Ethereum Trie with 100000 keys stored.
 
 ['./benchmarks/benchmarks.md'](./benchmark/results.md)
 
-# TESTS
-`npm run tests`
+## License
 
-# LICENSE
-[MPL-2.0](https://tldrlegal.com/license/mozilla-public-license-2.0-(mpl-2))
+**(C) 2017 DFINITY STIFTUNG** (http://dfinity.network)
+
+All code and designs are open sourced under GPL V3.
+
+![image](https://user-images.githubusercontent.com/6457089/32753794-10f4cbc2-c883-11e7-8dcf-ff8088b38f9f.png)
 
 :evergreen_tree: 
