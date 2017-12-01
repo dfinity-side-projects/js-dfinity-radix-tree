@@ -91,7 +91,7 @@ exports.encode = function (node, prefix = 0, encodeLen = false) {
 
   let val = node[VALUE]
   if (val !== undefined) {
-    if (!Buffer.isBuffer(val)) {
+    if (!val.buffer) {
       val = borc.encode(val)
     }
     encoded.push(val)

@@ -268,7 +268,11 @@ module.exports = class RadixTree {
     }
 
     if (key.constructor !== RadixTree.ArrayConstructor) {
-      return new RadixTree.ArrayConstructor(key.buffer)
+      if (Buffer.isBuffer(key)) {
+        return new RadixTree.ArrayConstructor(new Uint8Array(key).buffer)
+      } else {
+        return new RadixTree.ArrayConstructor(key.buffer)
+      }
     } else {
       return key
     }
