@@ -1,6 +1,6 @@
 const tape = require('tape')
 const crypto = require('crypto')
-const level = require('level')
+const level = require('level-browserify')
 const RadixTree = require('../')
 const db = level('./testdb')
 
@@ -13,22 +13,22 @@ tape('set and get', async t => {
     db: db
   })
 
-  await tree.set('test', Buffer.from('cat'))
+  tree.set('test', Buffer.from('cat'))
   let val = await tree.get('test')
   t.equals(val.value.toString(), 'cat')
-  await tree.set('te', Buffer.from('blop'))
+  tree.set('te', Buffer.from('blop'))
   val = await tree.get('test')
   t.equals(val.value.toString(), 'cat')
 
   val = await tree.get('te')
   t.equals(val.value.toString(), 'blop')
 
-  await tree.set('rad', Buffer.from('cat2'))
+  tree.set('rad', Buffer.from('cat2'))
 
   val = await tree.get('rad')
   t.equals(val.value.toString(), 'cat2')
 
-  await tree.set('test', Buffer.from('cat111'))
+  tree.set('test', Buffer.from('cat111'))
   val = await tree.get('test')
   t.equals(val.value.toString(), 'cat111')
 
@@ -58,14 +58,14 @@ tape('branch nodes', async t => {
   })
 
   let key0 = new RadixTree.ArrayConstructor([1, 1])
-  await tree.set(key0, Buffer.from('cat'))
   let key1 = new RadixTree.ArrayConstructor([0, 1])
-  await tree.set(key1, Buffer.from('cat2'))
-
   let key2 = new RadixTree.ArrayConstructor([1, 0])
-  await tree.set(key2, Buffer.from('cat'))
   let key3 = new RadixTree.ArrayConstructor([0, 0])
-  await tree.set(key3, Buffer.from('cat3'))
+
+  tree.set(key0, Buffer.from('cat'))
+  tree.set(key1, Buffer.from('cat2'))
+  tree.set(key2, Buffer.from('cat'))
+  tree.set(key3, Buffer.from('cat3'))
 
   let val = await tree.get(key0)
   t.equals(val.value.toString(), 'cat')
@@ -83,25 +83,25 @@ tape('delete', async t => {
   const tree = new RadixTree({
     db: db
   })
-  await tree.set('test', Buffer.from('cat'))
-  await tree.set('ter', Buffer.from('cat3'))
-  await tree.delete('te')
-  await tree.delete('test')
+  tree.set('test', Buffer.from('cat'))
+  tree.set('ter', Buffer.from('cat3'))
+  tree.delete('te')
+  tree.delete('test')
   await tree.delete('ter')
   t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
 
   // tests delete midle branchs
-  await tree.set('test', Buffer.from('cat'))
-  await tree.set('te', Buffer.from('cat2'))
-  await tree.set('ter', Buffer.from('cat3'))
+  tree.set('test', Buffer.from('cat'))
+  tree.set('te', Buffer.from('cat2'))
+  tree.set('ter', Buffer.from('cat3'))
   await tree.delete('te')
   let val = await tree.get('test')
   t.equals(val.value.toString(), 'cat')
 
   // tests delete end branchs
-  await tree.set('te', 'cat2')
-  await tree.delete('ter')
-  await tree.delete('te')
+  tree.set('te', 'cat2')
+  tree.delete('ter')
+  tree.delete('te')
   await tree.delete('test')
   t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
   t.end()
@@ -112,7 +112,7 @@ tape('large values', async t => {
     db: db
   })
   const saved = Buffer.alloc(33).fill(1)
-  await tree.set('test', saved)
+  tree.set('test', saved)
   const value = await tree.get('test')
   t.equals(value.value.toString(), saved.toString())
   t.end()
@@ -156,7 +156,7 @@ tape('random', async t => {
   const entries = 100
   for (let i = 0; i < entries; i++) {
     const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
-    await tree.set(key, Buffer.from([i]))
+    tree.set(key, Buffer.from([i]))
   }
   // console.log(JSON.stringify(tree.root, null, 2))
 

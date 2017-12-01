@@ -22,6 +22,25 @@ module.exports = class RadixTree {
 
     this.dag = opts.dag || new DataStore(opts.db)
     this.graph = opts.graph || new Graph(this.dag)
+    this._setting = Promise.resolve()
+  }
+
+  async _mutationLockWait () {
+    let setting
+    while (this._setting !== setting) {
+      setting = this._setting
+      await setting
+    }
+  }
+
+  _mutationLock (func) {
+    const setting = this._setting
+    this._setting = new Promise((resolve, reject) => {
+      return setting.then(() => {
+        return func().then(resolve).catch(reject)
+      })
+    })
+    return this._setting
   }
 
   /**
@@ -112,6 +131,7 @@ module.exports = class RadixTree {
    * @return {Promise}
    */
   async get (key, decode) {
+    await this._mutationLockWait()
     key = RadixTree.formatKey(key)
     let {root, value} = await this._get(key)
     if (decode && Buffer.isBuffer(value)) {
@@ -126,7 +146,11 @@ module.exports = class RadixTree {
    * @param {*} key
    * @return {Promise}
    */
-  async set (key, value) {
+  set (key, value) {
+    return this._mutationLock(this._set.bind(this, key, value))
+  }
+
+  async _set (key, value) {
     key = RadixTree.formatKey(key)
 
     if (treeNode.isEmpty(this.root)) {
@@ -171,7 +195,11 @@ module.exports = class RadixTree {
    * @param {*} key
    * @return {Promise}
    */
-  async delete (key) {
+  delete (key) {
+    return this._mutationLock(this._delete.bind(this, key))
+  }
+
+  async _delete (key) {
     key = RadixTree.formatKey(key)
     const results = await this._get(key)
     if (results.value !== undefined) {
@@ -229,7 +257,8 @@ module.exports = class RadixTree {
    * creates a merkle root for the current tree and stores the data perstantly
    * @returns {Promise}
    */
-  flush () {
+  async flush () {
+    await this._mutationLockWait()
     return this.graph.flush(this.root)
   }
 
