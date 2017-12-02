@@ -37,7 +37,7 @@ exports.getExtension = function (node) {
     const extension = toTypedArray(node['/'][EXTENSION][1])
     return extension.subarray(0, len)
   } else {
-    return []
+    return toTypedArray([])
   }
 }
 

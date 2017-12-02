@@ -23,48 +23,35 @@ module.exports = class RadixTree {
     this.dag = opts.dag || new DataStore(opts.db)
     this.graph = opts.graph || new Graph(this.dag)
     this._setting = Promise.resolve()
+    this.appendKeyToRoot = opts.appendKeyToRoot
   }
 
-  async _mutationLockWait () {
-    let setting
-    while (this._setting !== setting) {
-      setting = this._setting
-      await setting
+  /**
+   * creates a new instance of RadixTree that is the subTree of the given key
+   * @param {*} key
+   * @return {Promise} resolve to the new instance of RadixTree
+   */
+  async getSubTree (key, decode) {
+    const {root} = await this.get(key, decode)
+    return new RadixTree({dag: this.dag, root: root, appendKeyToRoot: true})
+  }
+
+  /**
+   * gets a value given a key. The promise resolves with an object containing
+   * `node` the node in the merkle tree and `value` the value of the that the
+   * node contains
+   * @param {*} key
+   * @return {Promise}
+   */
+  async get (key, decode) {
+    key = this.formatKey(key)
+    await this.done()
+    let {root, value} = await this._get(key)
+    if (decode && Buffer.isBuffer(value)) {
+      value = cbor.decode(value)
+      treeNode.setValue(root, value)
     }
-  }
-
-  _mutationLock (func) {
-    const setting = this._setting
-    this._setting = new Promise((resolve, reject) => {
-      return setting.then(() => {
-        return func().then(resolve).catch(reject)
-      })
-    })
-    return this._setting
-  }
-
-  /**
-   * returns the state of an empty tree
-   */
-  static get emptyTreeState () {
-    return [null, null, null]
-  }
-
-  /**
-   * returns an Uint1Array constructir which is used to repersent keys
-   * @returns {object}
-   */
-  static get ArrayConstructor () {
-    return Uint1Array
-  }
-
-  /**
-   * returns a merkle link for some given data
-   * @param {Buffer} data - the data which you would like to hash
-   * @returns {Buffer}
-   */
-  static getMerkleLink (data) {
-    return DataStore.getMerkleLink(data)
+    return {root, value}
   }
 
   async _get (key) {
@@ -83,10 +70,10 @@ module.exports = class RadixTree {
         // check if we compelete travered the extension
         if (extensionIndex !== extensionLen) {
           return {
-            index: index,
-            root: root,
-            extension: extension,
-            extensionIndex: extensionIndex
+            index,
+            root,
+            extension,
+            extensionIndex
           }
         }
       }
@@ -116,29 +103,11 @@ module.exports = class RadixTree {
     const value = treeNode.getValue(root)
 
     return {
-      value: value,
-      root: root,
-      parent: parent,
-      index: index
+      value,
+      root,
+      parent,
+      index
     }
-  }
-
-  /**
-   * gets a value given a key. The promise resolves with an object containing
-   * `node` the node in the merkle tree and `value` the value of the that the
-   * node contains
-   * @param {*} key
-   * @return {Promise}
-   */
-  async get (key, decode) {
-    await this._mutationLockWait()
-    key = RadixTree.formatKey(key)
-    let {root, value} = await this._get(key)
-    if (decode && Buffer.isBuffer(value)) {
-      value = cbor.decode(value)
-      treeNode.setValue(root, value)
-    }
-    return {node: root, value}
   }
 
   /**
@@ -147,12 +116,11 @@ module.exports = class RadixTree {
    * @return {Promise}
    */
   set (key, value) {
+    key = this.formatKey(key)
     return this._mutationLock(this._set.bind(this, key, value))
   }
 
   async _set (key, value) {
-    key = RadixTree.formatKey(key)
-
     if (treeNode.isEmpty(this.root)) {
       this.root['/'] = createNode(key, [null, null], value)['/']
     } else {
@@ -196,11 +164,11 @@ module.exports = class RadixTree {
    * @return {Promise}
    */
   delete (key) {
+    key = this.formatKey(key)
     return this._mutationLock(this._delete.bind(this, key))
   }
 
   async _delete (key) {
-    key = RadixTree.formatKey(key)
     const results = await this._get(key)
     if (results.value !== undefined) {
       const root = results.root
@@ -254,12 +222,43 @@ module.exports = class RadixTree {
   }
 
   /**
+   * returns a promise that resolve when the tree is done with all of its writes
+   * @returns {Promise}
+   */
+  async done () {
+    let setting
+    while (this._setting !== setting) {
+      setting = this._setting
+      await setting
+    }
+  }
+
+  _mutationLock (func) {
+    const setting = this._setting
+    this._setting = new Promise((resolve, reject) => {
+      return setting.then(() => {
+        return func().then(resolve).catch(reject)
+      })
+    })
+    return this._setting
+  }
+
+  /**
    * creates a merkle root for the current tree and stores the data perstantly
    * @returns {Promise}
    */
   async flush () {
-    await this._mutationLockWait()
+    await this.done()
     return this.graph.flush(this.root)
+  }
+
+  formatKey (key) {
+    key = RadixTree.formatKey(key)
+    if (this.appendKeyToRoot) {
+      key = treeNode.getExtension(this.root).toJSON().concat(key.toJSON())
+      key = new RadixTree.ArrayConstructor(key)
+    }
+    return key
   }
 
   static formatKey (key) {
@@ -276,6 +275,30 @@ module.exports = class RadixTree {
     } else {
       return key
     }
+  }
+
+  /**
+   * returns the state of an empty tree
+   */
+  static get emptyTreeState () {
+    return [null, null, null]
+  }
+
+  /**
+   * returns an Uint1Array constructir which is used to repersent keys
+   * @returns {object}
+   */
+  static get ArrayConstructor () {
+    return Uint1Array
+  }
+
+  /**
+   * returns a merkle link for some given data
+   * @param {Buffer} data - the data which you would like to hash
+   * @returns {Buffer}
+   */
+  static getMerkleLink (data) {
+    return DataStore.getMerkleLink(data)
   }
 }
 
@@ -302,8 +325,8 @@ function findMatchBits (key, node) {
   }
 
   return {
-    extensionIndex: extensionIndex,
-    extensionLen: extensionLen,
-    extension: extension
+    extensionIndex,
+    extensionLen,
+    extension
   }
 }

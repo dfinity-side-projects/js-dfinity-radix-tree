@@ -79,6 +79,37 @@ tape('branch nodes', async t => {
   t.end()
 })
 
+tape('sub trees', async t => {
+  const tree = new RadixTree({
+    db: db
+  })
+
+  let key0 = new RadixTree.ArrayConstructor([1, 1, 1, 1, 1])
+  let key1 = new RadixTree.ArrayConstructor([0, 1, 1, 1, 1])
+  let key2 = new RadixTree.ArrayConstructor([1, 1, 1, 0, 1])
+  let key3 = new RadixTree.ArrayConstructor([0, 0, 1, 0, 1])
+
+  tree.set(key0, Buffer.from('cat'))
+  tree.set(key1, Buffer.from('cat2'))
+  tree.set(key2, Buffer.from('dog'))
+  tree.set(key3, Buffer.from('cat3'))
+
+  await tree.done()
+  let key = new RadixTree.ArrayConstructor([1, 1, 1])
+  let subKey1 = new RadixTree.ArrayConstructor([1, 1])
+  let subKey2 = new RadixTree.ArrayConstructor([0, 1])
+
+  const subTree = await tree.getSubTree(key)
+
+  let val = await subTree.get(subKey1)
+  t.equals(val.value.toString(), 'cat')
+
+  val = await subTree.get(subKey2)
+  t.equals(val.value.toString(), 'dog')
+
+  t.end()
+})
+
 tape('delete', async t => {
   const tree = new RadixTree({
     db: db
