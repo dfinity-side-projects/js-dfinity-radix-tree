@@ -38,9 +38,7 @@ module.exports = class RadixTree {
   }
 
   /**
-   * gets a value given a key. The promise resolves with an object containing
-   * `node` the node in the merkle tree and `value` the value of the that the
-   * node contains
+   * gets a value given a key
    * @param {*} key
    * @return {Promise}
    */
