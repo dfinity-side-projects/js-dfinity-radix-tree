@@ -1,6 +1,5 @@
-const borc = require('borc')
 const leb128 = require('leb128').unsigned
-const LebStream = require('buffer-pipe')
+const BufferPipe = require('buffer-pipe')
 const Uint1Array = require('uint1array')
 const HASH_LEN = 20
 
@@ -91,9 +90,6 @@ exports.encode = function (node, prefix = 0, encodeLen = false) {
 
   let val = node[VALUE]
   if (val !== undefined) {
-    if (!val.buffer) {
-      val = borc.encode(val)
-    }
     encoded.push(val)
     prefix += MASK.VALUE
   }
@@ -110,28 +106,28 @@ exports.encode = function (node, prefix = 0, encodeLen = false) {
 exports.decode = function (val) {
   const node = [null, null, null]
   const prefix = val[0]
-  const lebStream = new LebStream(val.slice(1))
+  const pipe = new BufferPipe(val.slice(1))
 
   if (prefix & MASK.EXTENSION) {
-    const len = Number(leb128.read(lebStream))
-    const ext = lebStream.read(Math.ceil(len / 8))
+    const len = Number(leb128.read(pipe))
+    const ext = pipe.read(Math.ceil(len / 8))
     node[EXTENSION] = [len, ext]
   }
 
   if (prefix & MASK.LBRANCH) {
     node[LBRANCH] = {
-      '/': lebStream.read(HASH_LEN)
+      '/': pipe.read(HASH_LEN)
     }
   }
 
   if (prefix & MASK.RBRANCH) {
     node[RBRANCH] = {
-      '/': lebStream.read(HASH_LEN)
+      '/': pipe.read(HASH_LEN)
     }
   }
 
   if (prefix & MASK.VALUE) {
-    node[VALUE] = lebStream.buffer
+    node[VALUE] = pipe.buffer
   }
   return node
 }

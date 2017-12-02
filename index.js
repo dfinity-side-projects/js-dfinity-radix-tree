@@ -1,5 +1,4 @@
 const Graph = require('ipld-graph-builder')
-const cbor = require('borc')
 const Uint1Array = require('uint1array')
 const TextEncoder = require('text-encoding').TextEncoder
 const DataStore = require('./datastore.js')
@@ -46,12 +45,7 @@ module.exports = class RadixTree {
   async get (key, decode) {
     key = this.formatKey(key)
     await this.done()
-    let {root, value} = await this._get(key)
-    if (decode && Buffer.isBuffer(value)) {
-      value = cbor.decode(value)
-      treeNode.setValue(root, value)
-    }
-    return {root, value}
+    return this._get(key)
   }
 
   async _get (key) {

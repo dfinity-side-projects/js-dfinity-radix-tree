@@ -149,22 +149,6 @@ tape('large values', async t => {
   t.end()
 })
 
-tape('encoding / decoding', async t => {
-  // t.plan(3)
-  const tree = new RadixTree({
-    db: db
-  })
-
-  await tree.set('test', {
-    'something': 1
-  })
-  await tree.flush()
-
-  let r = await tree.get('test', true)
-  t.equals(r.value.something, 1, 'should correctly decode value')
-  t.end()
-})
-
 tape('errors', async t => {
   const tree = new RadixTree({
     db: db,
