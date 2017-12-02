@@ -15,22 +15,22 @@ tape('set and get', async t => {
 
   tree.set('test', Buffer.from('cat'))
   let val = await tree.get('test')
-  t.equals(val.value.toString(), 'cat')
+  t.equals(val.toString(), 'cat')
   tree.set('te', Buffer.from('blop'))
   val = await tree.get('test')
-  t.equals(val.value.toString(), 'cat')
+  t.equals(val.toString(), 'cat')
 
   val = await tree.get('te')
-  t.equals(val.value.toString(), 'blop')
+  t.equals(val.toString(), 'blop')
 
   tree.set('rad', Buffer.from('cat2'))
 
   val = await tree.get('rad')
-  t.equals(val.value.toString(), 'cat2')
+  t.equals(val.toString(), 'cat2')
 
   tree.set('test', Buffer.from('cat111'))
   val = await tree.get('test')
-  t.equals(val.value.toString(), 'cat111')
+  t.equals(val.toString(), 'cat111')
 
   const stateRoot = await tree.flush()
 
@@ -41,13 +41,13 @@ tape('set and get', async t => {
   })
 
   val = await tree.get('te')
-  t.equals(val.value.toString(), 'blop')
+  t.equals(val.toString(), 'blop')
 
   val = await tree.get('rad')
-  t.equals(val.value.toString(), 'cat2')
+  t.equals(val.toString(), 'cat2')
 
   val = await tree.get('test')
-  t.equals(val.value.toString(), 'cat111')
+  t.equals(val.toString(), 'cat111')
   // console.log(JSON.stringify(tree.root, null, 2))
   t.end()
 })
@@ -68,13 +68,13 @@ tape('branch nodes', async t => {
   tree.set(key3, Buffer.from('cat3'))
 
   let val = await tree.get(key0)
-  t.equals(val.value.toString(), 'cat')
+  t.equals(val.toString(), 'cat')
   val = await tree.get(key1)
-  t.equals(val.value.toString(), 'cat2')
+  t.equals(val.toString(), 'cat2')
   val = await tree.get(key2)
-  t.equals(val.value.toString(), 'cat')
+  t.equals(val.toString(), 'cat')
   val = await tree.get(key3)
-  t.equals(val.value.toString(), 'cat3')
+  t.equals(val.toString(), 'cat3')
 
   t.end()
 })
@@ -102,10 +102,10 @@ tape('sub trees', async t => {
   const subTree = await tree.getSubTree(key)
 
   let val = await subTree.get(subKey1)
-  t.equals(val.value.toString(), 'cat')
+  t.equals(val.toString(), 'cat')
 
   val = await subTree.get(subKey2)
-  t.equals(val.value.toString(), 'dog')
+  t.equals(val.toString(), 'dog')
 
   t.end()
 })
@@ -127,7 +127,7 @@ tape('delete', async t => {
   tree.set('ter', Buffer.from('cat3'))
   await tree.delete('te')
   let val = await tree.get('test')
-  t.equals(val.value.toString(), 'cat')
+  t.equals(val.toString(), 'cat')
 
   // tests delete end branchs
   tree.set('te', 'cat2')
@@ -145,7 +145,7 @@ tape('large values', async t => {
   const saved = Buffer.alloc(33).fill(1)
   tree.set('test', saved)
   const value = await tree.get('test')
-  t.equals(value.value.toString(), saved.toString())
+  t.equals(value.toString(), saved.toString())
   t.end()
 })
 
@@ -180,7 +180,7 @@ tape('random', async t => {
   for (let i = 0; i < entries; i++) {
     const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
     const value = await tree.get(key)
-    t.equals(value.value[0], i)
+    t.equals(value[0], i)
   }
 
   await tree.flush()

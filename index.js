@@ -31,7 +31,9 @@ module.exports = class RadixTree {
    * @return {Promise} resolve to the new instance of RadixTree
    */
   async getSubTree (key, decode) {
-    const {root} = await this.get(key, decode)
+    key = this.formatKey(key)
+    await this.done()
+    const {root} = await this._get(key, decode)
     return new RadixTree({dag: this.dag, root: root, appendKeyToRoot: true})
   }
 
@@ -45,7 +47,8 @@ module.exports = class RadixTree {
   async get (key, decode) {
     key = this.formatKey(key)
     await this.done()
-    return this._get(key)
+    const result = await this._get(key)
+    return result.value
   }
 
   async _get (key) {
