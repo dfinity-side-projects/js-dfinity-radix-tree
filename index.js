@@ -34,7 +34,7 @@ module.exports = class RadixTree {
     key = this.formatKey(key)
     await this.done()
     const {root} = await this._get(key, decode)
-    return new RadixTree({dag: this.dag, root: root, appendKeyToRoot: true})
+    return new RadixTree({dag: this.dag, root: {'/': root['/']}, appendKeyToRoot: true})
   }
 
   /**
@@ -64,12 +64,7 @@ module.exports = class RadixTree {
         index += extensionIndex
         // check if we compelete travered the extension
         if (extensionIndex !== extensionLen) {
-          return {
-            index,
-            root,
-            extension,
-            extensionIndex
-          }
+          return {index, root, extension, extensionIndex}
         }
       }
 
@@ -80,10 +75,7 @@ module.exports = class RadixTree {
         // preseves the '/'
         const nextRoot = branch[keySegment]
         if (!nextRoot) {
-          return {
-            root: root,
-            index: index
-          }
+          return {root, index}
         } else {
           parent = root
           root = nextRoot
@@ -97,12 +89,7 @@ module.exports = class RadixTree {
 
     const value = treeNode.getValue(root)
 
-    return {
-      value,
-      root,
-      parent,
-      index
-    }
+    return {value, root, parent, index}
   }
 
   /**
@@ -319,9 +306,5 @@ function findMatchBits (key, node) {
     extensionIndex++
   }
 
-  return {
-    extensionIndex,
-    extensionLen,
-    extension
-  }
+  return {extensionIndex, extensionLen, extension}
 }
