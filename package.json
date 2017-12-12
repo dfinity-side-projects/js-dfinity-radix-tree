@@ -20,7 +20,7 @@
   ],
   "devDependencies": {
     "coveralls": "^3.0.0",
-    "documentation": "^5.1.1",
+    "documentation": "^5.3.5",
     "level-browserify": "^1.1.1",
     "nyc": "^11.3.0",
     "standard": "^10.0.0",
