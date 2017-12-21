@@ -46,7 +46,7 @@ extension := length | extension
 
 ```
 Where the length is the number of bits that extension repesents. This varuint32
-encoded with a leb128. And the extension is bit array padded with 0's to the nearst byte. 
+encoded with leb128. And the extension is bit array padded with 0's to the nearst byte. 
 
 For example if the binary keys [0, 0, 1, 1] and
 [0, 0, 1, 0] have a shared path of [0, 0, 1]. The extension node would therefor be
