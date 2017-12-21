@@ -9,7 +9,7 @@ Each node has a type and contains at the most four elements
 node : = TYPE | EXTENSION | LBRANCH | RBRANCH | VALUE
 ```
 
-###Type
+### Type
 Contains a byte that the last 4 bits are used to signify which elements a node contains. 
 The bit field is defined a the following. The first 4 bits are paded to zero while in storage. These bits are reserved as insicators of type when sending the nodes to other clients which we will describe later.   
 
