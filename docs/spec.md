@@ -1,29 +1,28 @@
-This is a simple Merkle Binary [Radix Tree](https://ipfs.io/ipns/QmdJiuMWp2FxyaerfLrtdLF6Nr1EWpL7dPAxA9oKSPYYgV/wiki/Radix_tree.html). 
-
+This documnet provides the structure of the Dfinities Radix Tree which is type of the Merkle tree.(https://ipfs.io/ipns/QmdJiuMWp2FxyaerfLrtdLF6Nr1EWpL7dPAxA9oKSPYYgV/wiki/Radix_tree.html). 
+The radix tree data structure consists of nodes.
 
 ## Node
-Each node contains at the most four elements 
+Each node has a type and contains at the most four elements 
 "extension", "left branch", "right branch" and "value".
 
 ```
-node : = EXTENSION | LBRANCH | RBRANCH | VALUE
+node : = TYPE | EXTENSION | LBRANCH | RBRANCH | VALUE
 ```
 
-A prefix byte is used a bit field to signify which elements a node contains. 
-The bit field is defined a the following. The first nibble is reserved for
-merkle proofs.
+###Type
+Contains a byte that the last 4 bits are used to signify which elements a node contains. 
+The bit field is defined a the following. The first 4 bits are paded to zero while in storage. These bits are reserved as insicators of type when sending the nodes to other clients which we will describe later.   
 
 ```
-PREFIX := reserved | reserved | reserved | reserved | EXTENSION | LBRANCH | RBRANCH | VALUE
+Type := 0 | 0 | 0 | 0 | HasEXTENSION | HasLBRANCH | HasRBRANCH | HasVALUE
 ```
 
-For example a node that contained a left branch and a value would have a prefix byte
-of 00000101 or 0x07
+For example a node that contained a left branch and a value would have a prefix byte of 00000101 or 0x07
 
 The full encoded node would then look something like. `0x07<20_bytes_for_lbranch><remaing_bytes_for_value>` 
 
 
-## Branches
+### Branches
 
 The branch elements point to the next node in the tree using a merkle link.
 A merkle link is defined by the first 20 bytes of the result SHA2-256 of an encoded node.
@@ -38,11 +37,11 @@ link := SHA2(encoded_node)[0..20]
 ```
 
 
-## Extensions
-Extensions encode shared paths. Extensions are defined as
+### Extensions
+For optimization, we use the Extension element that encodes shared paths in the tree. Extensions are defined as
 
 ```
-extension := length | extension
+extension := Length | ExtensionValue
 
 ```
 Where the length is the number of bits that extension repesents. This varuint32
@@ -56,12 +55,12 @@ For example if the binary keys [0, 0, 1, 1] and
 where 3 is the the shared path length and the `0x04` is the shared path encoded
 as a little endian byte array.
 
-# Examples
+## Examples
 
-An empty tree is hash a merkle link of sha256(0x00) or `6e340b9cffb37a989ca544e6bb780a2c78901d3f`
+An empty tree has a merkle root which is a hash of sha256(0x00) or `6e340b9cffb37a989ca544e6bb780a2c78901d3f`.
 
 
-A tree with a single key 'binary' and value of 'tree' is encoded as
+A tree with a single node with key 'binary' and value of 'tree' is encoded as
 
 ```
 0x093062696e61727974726565
@@ -72,7 +71,7 @@ A tree with a single key 'binary' and value of 'tree' is encoded as
 0x4726565 the value 'tree'
 ```
 
-If an other key "bin" with the value "number" is add the tree will have two nodes
+If we add another key-value with the key "bin" and the value "number" to the tree, the tree will have two nodes
 
 The root node will be
 
