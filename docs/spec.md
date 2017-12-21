@@ -1,5 +1,5 @@
-This documnet provides the structure of the Dfinities Radix Tree which is type of the Merkle tree.(https://ipfs.io/ipns/QmdJiuMWp2FxyaerfLrtdLF6Nr1EWpL7dPAxA9oKSPYYgV/wiki/Radix_tree.html). 
-The radix tree data structure consists of nodes.
+This documnet provides the structure of the Dfinities Radix Tree which is a type of the Merkle tree.(https://ipfs.io/ipns/QmdJiuMWp2FxyaerfLrtdLF6Nr1EWpL7dPAxA9oKSPYYgV/wiki/Radix_tree.html). 
+Our radix tree data structure consists of Nodes.
 
 ## Node
 Each node has a type and contains at the most four elements 
