@@ -1,5 +1,5 @@
 This documnet provides the structure of the [Dfinity's Radix Tree.](https://ipfs.io/ipns/QmdJiuMWp2FxyaerfLrtdLF6Nr1EWpL7dPAxA9oKSPYYgV/wiki/Radix_tree.html) 
-Our radix tree data structure stores the key-valus; the tree nsists of Nodes that contains the value and the key is the path to the node in the tree.
+The radix tree data structure stores the key-values; the tree is an instances of nodes that contains the value and the key is the path to the node in the tree.
 
 ## Node
 Each node has a type and contains at most four elements: 
@@ -10,7 +10,7 @@ node : = TYPE | EXTENSION | LBRANCH | RBRANCH | VALUE
 ```
 
 ### Type
-The type feild contains a byte. The first 4 bits are paded to zero while the Node is stored in the tree. These bits are reserved as insicators of type when sending the nodes to other clients which we will describe later. The last 4 bits are used to signify which elements a node contains. The bit field is defined a the following
+The type field contains a byte. The first 4 bits are paded to zero while the Node is stored in the tree. These bits are reserved as insicators of type when sending the nodes to other clients which we will describe later. The last 4 bits are used to signify which elements a node contains. The bit field is defined a the following
 
 ```
 Type := 0 | 0 | 0 | 0 | HasEXTENSION | HasLBRANCH | HasRBRANCH | HasVALUE
