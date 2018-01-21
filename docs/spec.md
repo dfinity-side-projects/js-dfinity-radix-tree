@@ -1,4 +1,4 @@
-This documnet provides the structure of the [Dfinity's Radix Tree.](https://ipfs.io/ipns/QmdJiuMWp2FxyaerfLrtdLF6Nr1EWpL7dPAxA9oKSPYYgV/wiki/Radix_tree.html). 
+This documnet provides the structure of the [Dfinity's Radix Tree.](https://ipfs.io/ipns/QmdJiuMWp2FxyaerfLrtdLF6Nr1EWpL7dPAxA9oKSPYYgV/wiki/Radix_tree.html) 
 Our radix tree data structure stores the key-valus; the tree nsists of Nodes that contains the value and the key is the path to the node in the tree.
 
 ## Node
