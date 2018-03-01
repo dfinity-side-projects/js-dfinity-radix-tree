@@ -22,19 +22,6 @@ module.exports = class RadixTree {
     this.dag = opts.dag || new DataStore(opts.db)
     this.graph = opts.graph || new Graph(this.dag)
     this._setting = Promise.resolve()
-    this.appendKeyToRoot = opts.appendKeyToRoot
-  }
-
-  /**
-   * creates a new instance of RadixTree that is the subTree of the given key
-   * @param {*} key
-   * @return {Promise} resolve to the new instance of RadixTree
-   */
-  async getSubTree (key) {
-    key = this.formatKey(key)
-    await this.done()
-    const {root} = await this._get(key)
-    return new RadixTree({dag: this.dag, root: {'/': root['/']}, appendKeyToRoot: true})
   }
 
   /**
@@ -45,8 +32,7 @@ module.exports = class RadixTree {
   async get (key) {
     key = this.formatKey(key)
     await this.done()
-    const result = await this._get(key)
-    return result.value
+    return this._get(key)
   }
 
   async _get (key) {
@@ -236,10 +222,6 @@ module.exports = class RadixTree {
 
   formatKey (key) {
     key = RadixTree.formatKey(key)
-    if (this.appendKeyToRoot) {
-      key = treeNode.getExtension(this.root).toJSON().concat(key.toJSON())
-      key = new RadixTree.ArrayConstructor(key)
-    }
     return key
   }
 
