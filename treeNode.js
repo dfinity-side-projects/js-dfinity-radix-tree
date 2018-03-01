@@ -1,7 +1,4 @@
-const leb128 = require('leb128').unsigned
-const BufferPipe = require('buffer-pipe')
 const Uint1Array = require('uint1array')
-const HASH_LEN = 20
 
 function toTypedArray (array) {
   return new Uint1Array(new Uint8Array(array).buffer)
@@ -64,66 +61,4 @@ const MASK = {
   LBRANCH: 4,
   RBRANCH: 2,
   VALUE: 1
-}
-
-exports.encode = function (node, prefix = 0, encodeLen = false) {
-  let encoded = []
-  const ext = node[EXTENSION]
-  if (ext) {
-    const len = leb128.encode(ext[0])
-    encoded.push(len)
-    encoded.push(ext[1])
-    prefix += MASK.EXTENSION
-  }
-
-  const lb = node[LBRANCH]
-  if (lb) {
-    encoded.push(lb['/'])
-    prefix += MASK.LBRANCH
-  }
-
-  const rb = node[RBRANCH]
-  if (rb) {
-    encoded.push(rb['/'])
-    prefix += MASK.RBRANCH
-  }
-
-  let val = node[VALUE]
-  if (val !== undefined) {
-    encoded.push(val)
-    prefix += MASK.VALUE
-  }
-
-  encoded.unshift(Buffer.from([prefix]))
-  encoded = Buffer.concat(encoded)
-  return encoded
-}
-
-exports.decode = function (val) {
-  const node = [null, null, null]
-  const prefix = val[0]
-  const pipe = new BufferPipe(val.slice(1))
-
-  if (prefix & MASK.EXTENSION) {
-    const len = Number(leb128.read(pipe))
-    const ext = pipe.read(Math.ceil(len / 8))
-    node[EXTENSION] = [len, ext]
-  }
-
-  if (prefix & MASK.LBRANCH) {
-    node[LBRANCH] = {
-      '/': pipe.read(HASH_LEN)
-    }
-  }
-
-  if (prefix & MASK.RBRANCH) {
-    node[RBRANCH] = {
-      '/': pipe.read(HASH_LEN)
-    }
-  }
-
-  if (prefix & MASK.VALUE) {
-    node[VALUE] = pipe.buffer
-  }
-  return node
 }
