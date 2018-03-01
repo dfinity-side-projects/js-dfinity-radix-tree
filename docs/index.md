@@ -3,7 +3,6 @@
 ### Table of Contents
 
 -   [constructor](#constructor)
--   [getSubTree](#getsubtree)
 -   [get](#get)
 -   [set](#set)
 -   [delete](#delete)
@@ -15,7 +14,7 @@
 
 ## constructor
 
-[index.js:17-26](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L17-L26 "Source code on GitHub")
+[index.js:17-25](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L17-L25 "Source code on GitHub")
 
 **Parameters**
 
@@ -25,35 +24,21 @@
     -   `opts.graph`  {object} an instance of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder) alternitvly `opts.dag` can be used
     -   `opts.dag`  {object} an instance if [ipfs.dag](https://github.com/ipfs/js-ipfs#dag). If there is no `opts.graph` this will be used to create a new graph instance.
 
-## getSubTree
-
-[index.js:33-38](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L33-L38 "Source code on GitHub")
-
-creates a new instance of RadixTree that is the subTree of the given key
-
-**Parameters**
-
--   `key` **any** 
--   `decode`  
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** resolve to the new instance of RadixTree
-
 ## get
 
-[index.js:45-50](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L45-L50 "Source code on GitHub")
+[index.js:32-36](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L32-L36 "Source code on GitHub")
 
 gets a value given a key
 
 **Parameters**
 
 -   `key` **any** 
--   `decode`  
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
 
 ## set
 
-[index.js:100-103](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L100-L103 "Source code on GitHub")
+[index.js:86-89](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L86-L89 "Source code on GitHub")
 
 stores a value at a given key
 
@@ -66,7 +51,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ## delete
 
-[index.js:148-151](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L148-L151 "Source code on GitHub")
+[index.js:134-137](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L134-L137 "Source code on GitHub")
 
 deletes a value at a given key
 
@@ -78,7 +63,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ## done
 
-[index.js:210-216](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L210-L216 "Source code on GitHub")
+[index.js:196-202](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L196-L202 "Source code on GitHub")
 
 returns a promise that resolve when the tree is done with all of its writes
 
@@ -86,7 +71,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ## flush
 
-[index.js:232-235](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L232-L235 "Source code on GitHub")
+[index.js:218-221](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L218-L221 "Source code on GitHub")
 
 creates a merkle root for the current tree and stores the data perstantly
 
@@ -94,13 +79,13 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ## emptyTreeState
 
-[index.js:265-267](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L265-L267 "Source code on GitHub")
+[index.js:247-249](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L247-L249 "Source code on GitHub")
 
 returns the state of an empty tree
 
 ## ArrayConstructor
 
-[index.js:273-275](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L273-L275 "Source code on GitHub")
+[index.js:255-257](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L255-L257 "Source code on GitHub")
 
 returns an Uint1Array constructir which is used to repersent keys
 
@@ -108,7 +93,7 @@ Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 ## getMerkleLink
 
-[index.js:282-284](https://github.com/dfinity/js-dfinity-radix-tree/blob/f2549aeaac0dc25adbecd0d5c3e4acb0f9c5ca94/index.js#L282-L284 "Source code on GitHub")
+[index.js:264-266](https://github.com/dfinity/js-dfinity-radix-tree/blob/d8e138d6c098bb9fe80d40c19b9987c94516c5d0/index.js#L264-L266 "Source code on GitHub")
 
 returns a merkle link for some given data
 

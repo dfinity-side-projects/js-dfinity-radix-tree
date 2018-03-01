@@ -53,12 +53,3 @@ exports.isEmpty = function (node) {
   const branch = exports.getBranch(node)
   return !node['/'][EXTENSION] && !branch[0] && !branch[1] && node['/'][VALUE] === undefined
 }
-
-// PREFIX :=  | LBP | RBP | EXT | LB | RB | VALUE |
-// NODE := | PREFIX | LEN | PAYLOAD
-const MASK = {
-  EXTENSION: 8,
-  LBRANCH: 4,
-  RBRANCH: 2,
-  VALUE: 1
-}
