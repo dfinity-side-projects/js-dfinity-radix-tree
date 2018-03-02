@@ -74,8 +74,9 @@ module.exports = class RadixTree {
     }
 
     const value = treeNode.getValue(root)
+    const node = root['/']
 
-    return {value, root, parent, index}
+    return {value, root, node, parent, index}
   }
 
   /**
