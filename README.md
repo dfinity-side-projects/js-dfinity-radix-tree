@@ -1,16 +1,16 @@
 [![NPM Package](https://img.shields.io/npm/v/dfinity-radix-tree.svg?style=flat-square)](https://www.npmjs.org/package/dfinity-radix-tree)
 [![Build Status](https://img.shields.io/travis/dfinity/js-dfinity-radix-tree.svg?branch=master&style=flat-square)](https://travis-ci.org/dfinity/js-dfinity-radix-tree)
-[![Coverage Status](https://img.shields.io/coveralls/dfinity/js-dfinity-radix-tree.svg?style=flat-square)](https://coveralls.io/dfinity/js-dfinity-radix-tree) 
+[![Coverage Status](https://img.shields.io/coveralls/dfinity/js-dfinity-radix-tree.svg?style=flat-square)](https://coveralls.io/dfinity/js-dfinity-radix-tree)
 
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
 # Synopsis
 
 :evergreen_tree:  This implements a binary merkle radix tree. The point of using a binary radix
 tree is that it generates smaller proof size then trees with larger radixes.
-This tree is well suited for storing large dictonaries of fairly random keys.
-And is optimized for storing keys of the same length. If the keys are not 
-random better performance can be achived by hashing them first. It builds on 
+This tree is well suited for storing large dictionaries of fairly random keys.
+And is optimized for storing keys of the same length. If the keys are not
+random better performance can be archived by hashing them first. It builds on
 top of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder)
 and the resulting state and proofs are generated using it.
 
@@ -52,18 +52,18 @@ main()
 ## API
 ['./docs/'](./docs/index.md)
 
-## Spefication
+## Specification
 ['./docs/spec.md'](./docs/spec.md)
 
 ## Benchmarks
 The result of the benchmarks show that the binary radix tree produces proofs on
-average %67 small then the Ethereum Trie with 100000 keys stored.
+average 67% small then the Ethereum Trie with 100000 keys stored.
 
 ['./benchmarks/benchmarks.md'](./benchmark/results.md)
 
 ## License
 
-[**(C) 2017 DFINITY STIFTUNG**](http://dfinity.network)
+[**(C) 2018 DFINITY STIFTUNG**](http://dfinity.network)
 
 All code and designs are open sourced under GPL V3.
 

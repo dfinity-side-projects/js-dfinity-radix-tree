@@ -10,8 +10,8 @@ module.exports = class RadixTree {
   /**
    * @param opts
    * @param opts.root {object} a merkle root to a radix tree. If none, RadixTree will create an new root.
-   * @param opts.db {object} a level db  instance alternitly `opts.graph` can be used
-   * @param opts.graph {object} an instance of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder) alternitvly `opts.dag` can be used
+   * @param opts.db {object} a level db instance; alternatively, `opts.graph` can be used
+   * @param opts.graph {object} an instance of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder); alternatively, `opts.dag` can be used
    * @param opts.dag {object} an instance if [ipfs.dag](https://github.com/ipfs/js-ipfs#dag). If there is no `opts.graph` this will be used to create a new graph instance.
    */
   constructor (opts) {
@@ -48,7 +48,7 @@ module.exports = class RadixTree {
 
         const {extensionIndex, extensionLen, extension} = findMatchBits(subKey, root)
         index += extensionIndex
-        // check if we compelete travered the extension
+        // check if we complete traversed the extension
         if (extensionIndex !== extensionLen) {
           return {index, root, extension, extensionIndex}
         }
@@ -58,7 +58,7 @@ module.exports = class RadixTree {
       if (keySegment !== undefined) {
         const branch = treeNode.getBranch(root)
         await this.graph.get(branch, keySegment, true)
-        // preseves the '/'
+        // preserves the '/'
         const nextRoot = branch[keySegment]
         if (!nextRoot) {
           return {root, index}
@@ -213,7 +213,7 @@ module.exports = class RadixTree {
   }
 
   /**
-   * creates a merkle root for the current tree and stores the data perstantly
+   * creates a merkle root for the current tree and stores the data persistently
    * @returns {Promise}
    */
   async flush () {
@@ -250,7 +250,7 @@ module.exports = class RadixTree {
   }
 
   /**
-   * returns an Uint1Array constructir which is used to repersent keys
+   * returns an Uint1Array constructor which is used to represent keys
    * @returns {object}
    */
   static get ArrayConstructor () {
