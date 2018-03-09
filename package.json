@@ -1,6 +1,6 @@
 {
   "name": "dfinity-radix-tree",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "This implements a binary merkle radix tree",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   ],
   "devDependencies": {
     "coveralls": "^3.0.0",
-    "documentation": "^5.4.0",
+    "documentation": "^6.0.0",
     "level-browserify": "^1.1.1",
     "nyc": "^11.3.0",
     "standard": "^11.0.0",

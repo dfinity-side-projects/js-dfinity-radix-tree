@@ -80,7 +80,7 @@ module.exports = class RadixTree {
   }
 
   /**
-   * stores a value at a given key
+   * stores a value at a given key returning the tree node that the value was saved in
    * @param {*} key
    * @return {Promise}
    */
@@ -92,11 +92,13 @@ module.exports = class RadixTree {
   async _set (key, value) {
     if (treeNode.isEmpty(this.root)) {
       this.root['/'] = createNode(key, [null, null], value)['/']
+      return this.root['/']
     } else {
-      let {root, extensionIndex, extension, index, value: rValue} = await this._get(key)
+      let {node, root, extensionIndex, extension, index, value: rValue} = await this._get(key)
 
       if (rValue) {
         treeNode.setValue(root, value)
+        return node
       } else {
         if (extensionIndex !== undefined) {
           // split the extension node in two
@@ -120,15 +122,17 @@ module.exports = class RadixTree {
           const rootBranch = treeNode.getBranch(root)
           rootBranch[keySegment] = newNode
           treeNode.setBranch(root, rootBranch)
+          return newNode['/']
         } else {
           treeNode.setValue(root, value)
+          return root['/']
         }
       }
     }
   }
 
   /**
-   * deletes a value at a given key
+   *smContainer.js deletes a value at a given key
    * @param {*} key
    * @return {Promise}
    */
