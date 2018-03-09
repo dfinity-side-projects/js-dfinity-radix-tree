@@ -1,5 +1,5 @@
 const Buffer = require('safe-buffer').Buffer
-const crypto = require('node-webcrypto-shim')
+const crypto = require('crypto')
 const DAG = require('ipld-graph-builder/datastore.js')
 const HASH_LEN = 20
 const cbor = require('borc')
@@ -35,8 +35,8 @@ module.exports = class TreeDAG extends DAG {
   }
 
   static getMerkleLink (buf) {
-    return crypto.subtle.digest({
-      name: 'SHA-256'
-    }, buf).then(link => Buffer.from(link.slice(0, HASH_LEN)))
+    const hash = crypto.createHash('sha256')
+    hash.update(buf)
+    return hash.digest().slice(0, HASH_LEN)
   }
 }
