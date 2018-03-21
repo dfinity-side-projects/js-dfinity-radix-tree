@@ -20,10 +20,10 @@
   ],
   "devDependencies": {
     "coveralls": "^3.0.0",
-    "documentation": "^6.0.0",
-    "level-browserify": "^1.1.1",
-    "nyc": "^11.3.0",
-    "standard": "^11.0.0",
+    "documentation": "^6.1.0",
+    "level-browserify": "^1.1.2",
+    "nyc": "^11.6.0",
+    "standard": "^11.0.1",
     "tape": "^4.6.3"
   },
   "dependencies": {
