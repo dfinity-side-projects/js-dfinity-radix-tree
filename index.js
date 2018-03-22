@@ -13,13 +13,14 @@ module.exports = class RadixTree {
    * @param opts.db {object} a level db instance; alternatively, `opts.graph` can be used
    * @param opts.graph {object} an instance of [ipld-graph-builder](https://github.com/ipld/js-ipld-graph-builder); alternatively, `opts.dag` can be used
    * @param opts.dag {object} an instance if [ipfs.dag](https://github.com/ipfs/js-ipfs#dag). If there is no `opts.graph` this will be used to create a new graph instance.
+   * @param opts.decoder {object} a cbor decoder
    */
   constructor (opts) {
     this.root = opts.root || {
       '/': RadixTree.emptyTreeState
     }
 
-    this.dag = opts.dag || new DataStore(opts.db)
+    this.dag = opts.dag || new DataStore(opts.db, opts.decoder)
     this.graph = opts.graph || new Graph(this.dag)
     this._setting = Promise.resolve()
   }
@@ -45,7 +46,6 @@ module.exports = class RadixTree {
       const exNode = await this.graph.get(root, treeNode.EXTENSION, true)
       if (exNode) {
         let subKey = key.subarray(index)
-
         const {extensionIndex, extensionLen, extension} = findMatchBits(subKey, root)
         index += extensionIndex
         // check if we complete traversed the extension

@@ -14,6 +14,23 @@ tape('should generate the same stateRoot', async t => {
   t.end()
 })
 
+tape('should generate the same stateRoot', async t => {
+  let tree1 = new RadixTree({
+    db
+  })
+
+  let tree2 = new RadixTree({
+    db
+  })
+  await tree1.flush()
+  tree1.set('test', Buffer.from('cat'))
+  tree2.set('test', Buffer.from('cat'))
+  const stateRoot = await tree1.flush()
+  const stateRoot2 = await tree2.flush()
+  t.deepEquals(stateRoot2, stateRoot)
+  t.end()
+})
+
 tape('set and get', async t => {
   const r = await RadixTree.getMerkleLink(Buffer.from([0]))
 

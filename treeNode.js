@@ -1,4 +1,5 @@
 const Uint1Array = require('uint1array')
+const EMPTY_STATE_ROOT = Buffer.from('4cf812be9be2c6008325050f43d06676a08612c7', 'hex')
 
 function toTypedArray (array) {
   return new Uint1Array(new Uint8Array(array).buffer)
@@ -50,6 +51,9 @@ exports.setValue = function (node, val) {
 }
 
 exports.isEmpty = function (node) {
-  const branch = exports.getBranch(node)
-  return !node['/'][EXTENSION] && !branch[0] && !branch[1] && node['/'][VALUE] === undefined
+  if (Buffer.isBuffer(node['/'])) {
+    return !Buffer.compare(node['/'], EMPTY_STATE_ROOT)
+  } else {
+    return node['/'].every(el => !el)
+  }
 }

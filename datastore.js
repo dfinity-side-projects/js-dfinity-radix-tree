@@ -6,15 +6,35 @@ const cbor = require('borc')
 const HASH_LEN = 20
 const LINK_TAG = 42
 
-module.exports = class TreeDAG extends DAG {
-  async put (val) {
-    if (val[1]) {
-      val[1] = new cbor.Tagged(LINK_TAG, val[1]['/'])
-    }
-    if (val[2]) {
-      val[2] = new cbor.Tagged(LINK_TAG, val[2]['/'])
-    }
+function insertTags (val) {
+  if (Array.isArray(val)) {
+    val = val.map(v => {
+      if (v && v.hasOwnProperty('/')) {
+        return new cbor.Tagged(LINK_TAG, v['/'])
+      } else {
+        return insertTags(v)
+      }
+    })
+  }
+  return val
+}
 
+module.exports = class TreeDAG extends DAG {
+  constructor (dag, decoder = new cbor.Decoder({
+    tags: {
+      42: val => {
+        return {
+          '/': val
+        }
+      }
+    }
+  })) {
+    super(dag)
+    this.decoder = decoder
+  }
+
+  async put (val) {
+    val = insertTags(val)
     const encoded = cbor.encode(val)
     const key = await TreeDAG.getMerkleLink(encoded)
 
@@ -32,13 +52,7 @@ module.exports = class TreeDAG extends DAG {
           reject(err)
         } else {
           val = Buffer.from(val, 'hex')
-          const decoded = cbor.decode(val)
-          if (decoded[1]) {
-            decoded[1]['/'] = decoded[1].value
-          }
-          if (decoded[2]) {
-            decoded[2]['/'] = decoded[2].value
-          }
+          const decoded = this.decoder.decodeFirst(val)
           resolve(decoded)
         }
       })
