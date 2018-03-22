@@ -4,6 +4,17 @@ const level = require('level-browserify')
 const RadixTree = require('../')
 const db = level('./testdb')
 
+tape.only('set and get', async t => {
+  let tree = new RadixTree({
+    db: db
+  })
+  const stateRoot = await tree.flush()
+  console.log(stateRoot)
+  const stateRoot2 = await tree.flush()
+  console.log(stateRoot2)
+  t.end()
+})
+
 tape('set and get', async t => {
   const r = await RadixTree.getMerkleLink(Buffer.from([0]))
 
