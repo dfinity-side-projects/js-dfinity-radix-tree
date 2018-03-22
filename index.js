@@ -16,9 +16,8 @@ module.exports = class RadixTree {
    * @param opts.decoder {object} a cbor decoder
    */
   constructor (opts) {
-    this._root = opts.root || {
-      '/': RadixTree.emptyTreeState
-    }
+    this._root = {}
+    this.root = opts.root || RadixTree.emptyTreeState
 
     this.dag = opts.dag || new DataStore(opts.db, opts.decoder)
     this.graph = opts.graph || new Graph(this.dag)
@@ -234,7 +233,8 @@ module.exports = class RadixTree {
    */
   async flush () {
     await this.done()
-    return this.graph.flush(this._root)
+    await this.graph.flush(this._root)
+    return this.root
   }
 
   formatKey (key) {
