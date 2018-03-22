@@ -4,7 +4,7 @@ const level = require('level-browserify')
 const RadixTree = require('../')
 const db = level('./testdb')
 
-tape.only('set and get', async t => {
+tape('set and get', async t => {
   let tree = new RadixTree({
     db: db
   })
