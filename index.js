@@ -16,13 +16,25 @@ module.exports = class RadixTree {
    * @param opts.decoder {object} a cbor decoder
    */
   constructor (opts) {
-    this.root = opts.root || {
+    this._root = opts.root || {
       '/': RadixTree.emptyTreeState
     }
 
     this.dag = opts.dag || new DataStore(opts.db, opts.decoder)
     this.graph = opts.graph || new Graph(this.dag)
     this._setting = Promise.resolve()
+  }
+
+  /**
+   * the root of the tree
+   * @type {Buffer}
+   */
+  get root () {
+    return this._root['/']
+  }
+
+  set root (root) {
+    this._root['/'] = root
   }
 
   /**
@@ -38,7 +50,7 @@ module.exports = class RadixTree {
 
   async _get (key) {
     let index = 0
-    let root = this.root
+    let root = this._root
     let parent
 
     while (1) {
@@ -90,9 +102,9 @@ module.exports = class RadixTree {
   }
 
   async _set (key, value) {
-    if (treeNode.isEmpty(this.root)) {
-      this.root['/'] = createNode(key, [null, null], value)['/']
-      return this.root['/']
+    if (treeNode.isEmpty(this._root)) {
+      this._root['/'] = createNode(key, [null, null], value)['/']
+      return this._root['/']
     } else {
       let {node, root, extensionIndex, extension, index, value: rValue} = await this._get(key)
 
@@ -222,7 +234,7 @@ module.exports = class RadixTree {
    */
   async flush () {
     await this.done()
-    return this.graph.flush(this.root)
+    return this.graph.flush(this._root)
   }
 
   formatKey (key) {

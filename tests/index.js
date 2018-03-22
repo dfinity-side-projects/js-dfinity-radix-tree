@@ -21,6 +21,7 @@ tape('should generate the same stateRoot', async t => {
   let tree = new RadixTree({
     db: db
   })
+  tree.root = [null, null, null]
   const stateRoot = await tree.flush()
   const stateRoot2 = await tree.flush()
   t.deepEquals(stateRoot2, stateRoot)
@@ -128,7 +129,7 @@ tape('delete', async t => {
   tree.delete('te')
   tree.delete('test')
   await tree.delete('ter')
-  t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
+  t.deepEquals(tree.root, RadixTree.emptyTreeState)
 
   // tests delete midle branchs
   tree.set('test', Buffer.from('cat'))
@@ -143,7 +144,7 @@ tape('delete', async t => {
   tree.delete('ter')
   tree.delete('te')
   await tree.delete('test')
-  t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
+  t.deepEquals(tree._root['/'], RadixTree.emptyTreeState)
   t.end()
 })
 
@@ -198,7 +199,7 @@ tape('random', async t => {
     await tree.delete(key)
   }
 
-  t.deepEquals(tree.root['/'], RadixTree.emptyTreeState)
+  t.deepEquals(tree._root['/'], RadixTree.emptyTreeState)
 
   t.end()
 })
