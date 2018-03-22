@@ -6,9 +6,6 @@ const cbor = require('borc')
 
 module.exports = class TreeDAG extends DAG {
   async put (val) {
-    if (TreeDAG.isValidLink(val)) {
-      return val
-    }
     const encoded = cbor.encode(val)
     const key = await TreeDAG.getMerkleLink(encoded)
 
