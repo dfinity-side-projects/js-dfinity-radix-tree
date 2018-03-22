@@ -1,6 +1,6 @@
 {
   "name": "dfinity-radix-tree",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "This implements a binary merkle radix tree",
   "main": "index.js",
   "scripts": {
