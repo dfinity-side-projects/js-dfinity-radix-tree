@@ -230,6 +230,21 @@ module.exports = class RadixTree {
     return key
   }
 
+  /**
+   * Checks if a given root exists or not
+   * @param {Buffer} root
+   * @return {Promise<boolean>}
+   */
+  async rootExists (root) {
+    await this.flush()
+    try {
+      await this.dag.get(root)
+    } catch (e) {
+      return false
+    }
+    return true
+  }
+
   static formatKey (key) {
     if (typeof key === 'string') {
       key = encoder.encode(key)

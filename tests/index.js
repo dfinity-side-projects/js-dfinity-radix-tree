@@ -4,6 +4,19 @@ const level = require('level-browserify')
 const RadixTree = require('../')
 const db = level('./testdb')
 
+tape('root existance', async t => {
+  let tree = new RadixTree({
+    db: db
+  })
+  let exists = await tree.rootExists(Buffer.from([0]))
+  t.equals(exists, false)
+
+  tree.set('test', Buffer.from('cat'))
+  exists = await tree.rootExists(Buffer.from('01cff22f1e93e25d8691d6238031d98885ab468f', 'hex'))
+  t.equals(exists, true)
+  t.end()
+})
+
 tape('should generate the same stateRoot', async t => {
   let tree = new RadixTree({
     db: db
