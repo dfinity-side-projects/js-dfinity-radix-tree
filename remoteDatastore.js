@@ -1,6 +1,6 @@
 const Buffer = require('safe-buffer').Buffer
 const TreeDAG = require('./datastore.js')
-const fetch = typeof window !== 'undefined' ? window.fetch : require('node-fetch')
+const fetch = require('node-fetch')
 
 module.exports = class RemoteTreeDAG extends TreeDAG {
   /**
@@ -21,11 +21,11 @@ module.exports = class RemoteTreeDAG extends TreeDAG {
   async get (link) {
     try {
       return await super.get(link)
-    } catch (e) {}
-
-    if (this.remoteOpts.uri) {
-      await this.fetchRemote(link)
-      return super.get(link)
+    } catch (e) {
+      if (this.remoteOpts.uri) {
+        await this.fetchRemote(link)
+        return super.get(link)
+      }
     }
   }
 
