@@ -21,6 +21,7 @@
   "devDependencies": {
     "coveralls": "^3.0.0",
     "documentation": "^6.1.0",
+    "fs-extra": "^5.0.0",
     "level-browserify": "^1.1.2",
     "nyc": "^11.6.0",
     "standard": "^11.0.1",
@@ -29,8 +30,12 @@
   "dependencies": {
     "borc": "git+https://github.com/dignifiedquire/borc.git#fix/nested-array",
     "ipld-graph-builder": "^1.3.8",
+    "node-fetch": "^2.1.2",
     "text-encoding": "^0.6.4",
     "uint1array": "^1.0.5"
+  },
+  "browser": {
+    "node-fetch": "./fetch.js"
   },
   "standard": {
     "ignore": [

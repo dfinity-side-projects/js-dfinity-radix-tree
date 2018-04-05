@@ -1,7 +1,10 @@
+const fs = require('fs-extra')
 const tape = require('tape')
 const crypto = require('crypto')
 const level = require('level-browserify')
 const RadixTree = require('../')
+const RemoteDataStore = require('../remoteDatastore')
+const remote = require('./remote')
 const db = level('./testdb')
 
 tape('root existance', async t => {
@@ -201,5 +204,36 @@ tape('random', async t => {
 
   t.deepEquals(tree._root['/'], RadixTree.emptyTreeState)
 
+  t.end()
+})
+
+tape('remote', async t => {
+  // remote
+  const remoteTree = new RadixTree({
+    db: db
+  })
+  const server = remote.listen(db)
+
+  const entries = 100
+  for (let i = 0; i < entries; i++) {
+    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    remoteTree.set(key, Buffer.from([i]))
+  }
+  const stateRoot = await remoteTree.flush()
+
+  // local
+  fs.removeSync('./localdb')
+  const localTree = new RadixTree({
+    dag: new RemoteDataStore(level('./localdb'), {uri: 'http://localhost:3000'})
+  })
+  localTree.root = stateRoot
+
+  for (let i = 0; i < entries; i++) {
+    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const value = await localTree.get(key)
+    t.equals(value.value[0], i)
+  }
+
+  server.close()
   t.end()
 })
