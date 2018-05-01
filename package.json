@@ -21,7 +21,7 @@
   "devDependencies": {
     "coveralls": "^3.0.0",
     "documentation": "^6.1.0",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^6.0.0",
     "level-browserify": "^1.1.2",
     "nyc": "^11.6.0",
     "standard": "^11.0.1",
