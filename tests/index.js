@@ -237,3 +237,27 @@ tape('remote', async t => {
   server.close()
   t.end()
 })
+
+tape('reset', async t => {
+  const tree = new RadixTree({
+    db: db
+  })
+
+  const stateRoot1 = await tree.flush()
+
+  const entries = 100
+  for (let i = 0; i < entries; i++) {
+    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    tree.set(key, Buffer.from([i]))
+  }
+
+  await tree.flush()
+
+  tree.root = RadixTree.emptyTreeState
+
+  const stateRoot2 = await tree.flush()
+
+  t.deepEquals(stateRoot1, stateRoot2)
+
+  t.end()
+})
