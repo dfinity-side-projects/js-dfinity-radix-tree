@@ -1,5 +1,21 @@
 const Uint1Array = require('uint1array')
+const cbor = require('borc')
 const EMPTY_STATE_ROOT = Buffer.from('4cf812be9be2c6008325050f43d06676a08612c7', 'hex')
+
+const LINK_TAG = 42
+
+function insertTags (val) {
+  if (Array.isArray(val)) {
+    val = val.map(v => {
+      if (v && v.hasOwnProperty('/')) {
+        return new cbor.Tagged(LINK_TAG, v['/'])
+      } else {
+        return insertTags(v)
+      }
+    })
+  }
+  return val
+}
 
 function toTypedArray (array) {
   return new Uint1Array(new Uint8Array(array).buffer)
@@ -25,7 +41,7 @@ exports.getValue = function (node) {
 }
 
 exports.deleteValue = function (node) {
-  delete node['/'][VALUE]
+  node['/'] = node['/'].slice(0, 3)
 }
 
 exports.getExtension = function (node) {
@@ -42,12 +58,14 @@ exports.setExtension = function (node, ex) {
   if (ex && ex.length) {
     node['/'][EXTENSION] = [ex.length, Buffer.from(ex.buffer)]
   } else {
-    delete node['/'][EXTENSION]
+    node['/'][EXTENSION] = null
   }
 }
 
 exports.setValue = function (node, val) {
-  node['/'][VALUE] = val
+  if (val !== undefined) {
+    node['/'][VALUE] = val
+  }
 }
 
 exports.isEmpty = function (node) {
@@ -56,4 +74,9 @@ exports.isEmpty = function (node) {
   } else {
     return node['/'].every(el => !el)
   }
+}
+
+exports.encodeNode = function (node) {
+  const val = insertTags(node)
+  return cbor.encode(val)
 }

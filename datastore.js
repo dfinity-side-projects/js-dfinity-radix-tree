@@ -2,22 +2,9 @@ const Buffer = require('safe-buffer').Buffer
 const crypto = require('crypto')
 const DAG = require('ipld-graph-builder/datastore.js')
 const cbor = require('borc')
+const node = require('./treeNode.js')
 
 const HASH_LEN = 20
-const LINK_TAG = 42
-
-function insertTags (val) {
-  if (Array.isArray(val)) {
-    val = val.map(v => {
-      if (v && v.hasOwnProperty('/')) {
-        return new cbor.Tagged(LINK_TAG, v['/'])
-      } else {
-        return insertTags(v)
-      }
-    })
-  }
-  return val
-}
 
 module.exports = class TreeDAG extends DAG {
   constructor (dag, decoder = new cbor.Decoder({
@@ -34,8 +21,7 @@ module.exports = class TreeDAG extends DAG {
   }
 
   async put (val) {
-    val = insertTags(val)
-    const encoded = cbor.encode(val)
+    const encoded = node.encodeNode(val)
     const key = await TreeDAG.getMerkleLink(encoded)
 
     return new Promise((resolve, reject) => {
