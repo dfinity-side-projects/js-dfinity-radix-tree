@@ -30,9 +30,7 @@
   "dependencies": {
     "borc": "^2.0.3",
     "ipld-graph-builder": "^1.3.8",
-    "node-fetch": "^2.1.2",
-    "text-encoding": "^0.6.4",
-    "uint1array": "git+https://github.com/dosyago-coder-0/Uint1Array.git#9afd708"
+    "node-fetch": "^2.1.2"
   },
   "browser": {
     "node-fetch": "./fetch.js"

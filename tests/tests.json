@@ -1,0 +1,392 @@
+{
+  "empty": [
+    {
+      "op": "stateRoot",
+      "value": "0x4cf812be9be2c6008325050f43d06676a08612c7"
+    }
+  ],
+  "setAndGet": [
+    {
+      "op": "set",
+      "key": "0x74657374",
+      "value": "0x636174"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x01cff22f1e93e25d8691d6238031d98885ab468f"
+    },
+    {
+      "op": "get",
+      "key": "0x74657374",
+      "value": "0x636174"
+    },
+    {
+      "op": "set",
+      "key": "0x7465",
+      "value": "0x626c6f70"
+    },
+    {
+      "op": "get",
+      "key": "0x74657374",
+      "value": "0x636174"
+    },
+    {
+      "op": "get",
+      "key": "0x7465",
+      "value": "0x626c6f70"
+    },
+    {
+      "op": "set",
+      "key": "0x726164",
+      "value": "0x63617432"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x05213318991804dad6a926aacfd4ac3481161371"
+    },
+    {
+      "op": "get",
+      "key": "0x726164",
+      "value": "0x63617432"
+    },
+    {
+      "op": "set",
+      "key": "0x74657374",
+      "value": "0x636174313131"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x80a385b4f06471e95a5993ef0e3b7aa99b64241c"
+    },
+    {
+      "op": "get",
+      "key": "0x74657374",
+      "value": "0x636174313131"
+    }
+  ],
+  "insert_and_delete": [
+    {
+      "op": "set",
+      "key": "0x666f6f",
+      "value": "0x626172"
+    },
+    {
+      "op": "set",
+      "key": "0x666f6f62",
+      "value": "0x62617a"
+    },
+    {
+      "op": "set",
+      "key": "0x666f6f61",
+      "value": "0x626172"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0xbccc80ab0d248beb8e6ce7b81c78559c506cedac"
+    },
+    {
+      "op": "delete",
+      "key": "0x666f6f62"
+    },
+    {
+      "op": "delete",
+      "key": "0x666f6f62"
+    },
+    {
+      "op": "get",
+      "key": "0x666f6f",
+      "value": "0x626172"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x3a6305b358770cafa44b3b358fa98746fbd8679f"
+    }
+  ],
+  "insert_and_delete_2": [
+    {
+      "op": "set",
+      "key": "0x20",
+      "value": "0x626172"
+    },
+    {
+      "op": "set",
+      "key": "0x00",
+      "value": "0x62617a"
+    },
+    {
+      "op": "set",
+      "key": "0x00",
+      "value": "0x626172"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x42c33979750064d830468c4cc954642a14d97497"
+    },
+    {
+      "op": "delete",
+      "key": "0x00"
+    },
+    {
+      "op": "get",
+      "key": "0x20",
+      "value": "0x626172"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x52c8cef4b4014aba94b7bc1990919335b417cf13"
+    }
+  ],
+  "delete_with_one_branch": [
+    {
+      "op": "set",
+      "key": "0x00",
+      "value": "0x626172"
+    },
+    {
+      "op": "set",
+      "key": "0x01",
+      "value": "0x62617a"
+    },
+    {
+      "op": "set",
+      "key": "0x0002",
+      "value": "0x626172"
+    },
+    {
+      "op": "delete",
+      "key": "0x00"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0xf47670c01ff5450ff83c1e7f46092e94fc2c0d0b"
+    }
+  ],
+  "delete_with_two_branches": [
+    {
+      "op": "set",
+      "key": "0x00",
+      "value": "0x626172"
+    },
+    {
+      "op": "set",
+      "key": "0x00f0",
+      "value": "0x626172"
+    },
+    {
+      "op": "set",
+      "key": "0x0000",
+      "value": "0x626172"
+    },
+    {
+      "op": "delete",
+      "key": "0x00"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0xf7d7490a412c72a2fa66bf3b85af4a1027f02058"
+    }
+  ],
+  "delete_with_no_branches": [
+    {
+      "op": "set",
+      "key": "0x00",
+      "value": "0x626172"
+    },
+    {
+      "op": "set",
+      "key": "0x00f0",
+      "value": "0x626172"
+    },
+    {
+      "op": "set",
+      "key": "0x0000",
+      "value": "0x626172"
+    },
+    {
+      "op": "delete",
+      "key": "0x0000"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x230a8e726c6444964d027d906fe0fdc361122163"
+    }
+  ],
+  "saturatedTree": [
+    {
+      "op": "set",
+      "key": "0x00",
+      "value": "0x636174"
+    },
+    {
+      "op": "set",
+      "key": "0x01",
+      "value": "0x63617431"
+    },
+    {
+      "op": "set",
+      "key": "0x02",
+      "value": "0x63617432"
+    },
+    {
+      "op": "set",
+      "key": "0x03",
+      "value": "0x63617433"
+    },
+    {
+      "op": "set",
+      "key": "0x04",
+      "value": "0x63617434"
+    },
+    {
+      "op": "set",
+      "key": "0x05",
+      "value": "0x63617435"
+    },
+    {
+      "op": "set",
+      "key": "0x06",
+      "value": "0x63617436"
+    },
+    {
+      "op": "set",
+      "key": "0x07",
+      "value": "0x63617437"
+    },
+    {
+      "op": "set",
+      "key": "0x08",
+      "value": "0x63617438"
+    },
+    {
+      "op": "set",
+      "key": "0x09",
+      "value": "0x63617439"
+    },
+    {
+      "op": "set",
+      "key": "0x0a",
+      "value": "0x63617461"
+    },
+    {
+      "op": "set",
+      "key": "0x0b",
+      "value": "0x63617462"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0xc4bf5d2ff89e90cd9edd81e8e160953406ac446b"
+    },
+    {
+      "op": "get",
+      "key": "0x00",
+      "value": "0x636174"
+    },
+    {
+      "op": "get",
+      "key": "0x01",
+      "value": "0x63617431"
+    },
+    {
+      "op": "get",
+      "key": "0x02",
+      "value": "0x63617432"
+    },
+    {
+      "op": "get",
+      "key": "0x03",
+      "value": "0x63617433"
+    },
+    {
+      "op": "get",
+      "key": "0x04",
+      "value": "0x63617434"
+    },
+    {
+      "op": "get",
+      "key": "0x05",
+      "value": "0x63617435"
+    },
+    {
+      "op": "get",
+      "key": "0x06",
+      "value": "0x63617436"
+    },
+    {
+      "op": "get",
+      "key": "0x07",
+      "value": "0x63617437"
+    },
+    {
+      "op": "get",
+      "key": "0x08",
+      "value": "0x63617438"
+    },
+    {
+      "op": "get",
+      "key": "0x09",
+      "value": "0x63617439"
+    },
+    {
+      "op": "get",
+      "key": "0x0a",
+      "value": "0x63617461"
+    },
+    {
+      "op": "get",
+      "key": "0x0b",
+      "value": "0x63617462"
+    },
+    {
+      "op": "delete",
+      "key": "0x00"
+    },
+    {
+      "op": "delete",
+      "key": "0x01"
+    },
+    {
+      "op": "delete",
+      "key": "0x02"
+    },
+    {
+      "op": "delete",
+      "key": "0x03"
+    },
+    {
+      "op": "delete",
+      "key": "0x04"
+    },
+    {
+      "op": "delete",
+      "key": "0x05"
+    },
+    {
+      "op": "delete",
+      "key": "0x06"
+    },
+    {
+      "op": "delete",
+      "key": "0x07"
+    },
+    {
+      "op": "delete",
+      "key": "0x08"
+    },
+    {
+      "op": "delete",
+      "key": "0x09"
+    },
+    {
+      "op": "delete",
+      "key": "0x0a"
+    },
+    {
+      "op": "delete",
+      "key": "0x0b"
+    },
+    {
+      "op": "stateRoot",
+      "value": "0x4cf812be9be2c6008325050f43d06676a08612c7"
+    }
+  ]
+}

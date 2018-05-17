@@ -1,10 +1,6 @@
 const Graph = require('ipld-graph-builder')
-const Uint1Array = require('uint1array')
-const TextEncoder = require('text-encoding').TextEncoder
 const DataStore = require('./datastore.js')
 const treeNode = require('./treeNode.js')
-
-const encoder = new TextEncoder('utf-8')
 
 module.exports = class RadixTree {
   /**
@@ -42,7 +38,7 @@ module.exports = class RadixTree {
    * @return {Promise}
    */
   async get (key) {
-    key = this.formatKey(key)
+    key = RadixTree.formatKey(key)
     await this.done()
     return this._get(key)
   }
@@ -56,7 +52,7 @@ module.exports = class RadixTree {
       // load the root
       const exNode = await this.graph.get(root, treeNode.EXTENSION, true)
       if (exNode) {
-        let subKey = key.subarray(index)
+        let subKey = key.slice(index)
         const {extensionIndex, extensionLen, extension} = findMatchBits(subKey, root)
         index += extensionIndex
         // check if we complete traversed the extension
@@ -96,7 +92,7 @@ module.exports = class RadixTree {
    * @return {Promise}
    */
   set (key, value) {
-    key = this.formatKey(key)
+    key = RadixTree.formatKey(key)
     return this._mutationLock(this._set.bind(this, key, value))
   }
 
@@ -114,8 +110,8 @@ module.exports = class RadixTree {
         if (extensionIndex !== undefined) {
           // split the extension node in two
           const extensionKey = extension[extensionIndex]
-          const remExtension = extension.subarray(extensionIndex + 1)
-          extension = extension.subarray(0, extensionIndex)
+          const remExtension = extension.slice(extensionIndex + 1)
+          extension = extension.slice(0, extensionIndex)
 
           treeNode.setExtension(root, remExtension)
           const branch = [null, null]
@@ -128,7 +124,7 @@ module.exports = class RadixTree {
         // if there are remaning key segments create an extension node
         if (index < key.length) {
           const keySegment = key[index]
-          const extension = key.subarray(index + 1, key.length)
+          const extension = key.slice(index + 1, key.length)
           const newNode = createNode(extension, [null, null], value)
           const rootBranch = treeNode.getBranch(root)
           rootBranch[keySegment] = newNode
@@ -148,7 +144,7 @@ module.exports = class RadixTree {
    * @return {Promise}
    */
   delete (key) {
-    key = this.formatKey(key)
+    key = RadixTree.formatKey(key)
     return this._mutationLock(this._delete.bind(this, key))
   }
 
@@ -192,11 +188,10 @@ module.exports = class RadixTree {
           const child = nodes[0]
           const pExtension = treeNode.getExtension(root)
           const childExtension = treeNode.getExtension(child)
-          const newExtension = new RadixTree.ArrayConstructor(pExtension.length + childExtension.length + 1)
 
-          newExtension.set(pExtension)
+          let newExtension = pExtension.slice(0)
           newExtension[pExtension.length] = index
-          newExtension.set(childExtension, pExtension.length + 1)
+          newExtension = newExtension.concat(childExtension)
 
           treeNode.setExtension(child, newExtension)
           root['/'] = child['/']
@@ -237,9 +232,40 @@ module.exports = class RadixTree {
     return this.root
   }
 
-  formatKey (key) {
-    key = RadixTree.formatKey(key)
-    return key
+  toJSON (node = this.root) {
+    const json = [null, null, null]
+    if (node[0]) {
+      json[0] = [node[0][0], treeNode.buffer2bits(node[0][1]).slice(0, node[0][0]).toString()]
+    }
+
+    if (node[1]) {
+      if (Buffer.isBuffer(node[1]['/'])) {
+        json[1] = {
+          '/': '0x' + node[1]['/'].toString('hex')
+        }
+      } else {
+        json[1] = {
+          '/': this.toJSON(node[1]['/'])
+        }
+      }
+    }
+
+    if (node[2]) {
+      if (Buffer.isBuffer(node[2]['/'])) {
+        json[2] = {
+          '/': '0x' + node[2]['/'].toString('hex')
+        }
+      } else {
+        json[2] = {
+          '/': this.toJSON(node[2]['/'])
+        }
+      }
+    }
+
+    if (node[3]) {
+      json[3] = '0x' + node[3].toString('hex')
+    }
+    return json
   }
 
   /**
@@ -259,15 +285,11 @@ module.exports = class RadixTree {
 
   static formatKey (key) {
     if (typeof key === 'string') {
-      key = encoder.encode(key)
+      key = Buffer.from(key)
     }
 
-    if (key.constructor !== RadixTree.ArrayConstructor) {
-      if (Buffer.isBuffer(key)) {
-        return new RadixTree.ArrayConstructor(new Uint8Array(key).buffer)
-      } else {
-        return new RadixTree.ArrayConstructor(key.buffer)
-      }
+    if (!Array.isArray(key)) {
+      return treeNode.buffer2bits(key)
     } else {
       return key
     }
@@ -278,14 +300,6 @@ module.exports = class RadixTree {
    */
   static get emptyTreeState () {
     return [null, null, null]
-  }
-
-  /**
-   * returns an Uint1Array constructor which is used to represent keys
-   * @returns {object}
-   */
-  static get ArrayConstructor () {
-    return Uint1Array
   }
 
   /**

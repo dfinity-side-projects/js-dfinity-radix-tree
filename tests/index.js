@@ -48,6 +48,37 @@ tape('should generate the same stateRoot', async t => {
   t.end()
 })
 
+tape('insert that creates one new node', async t => {
+  let tree = new RadixTree({
+    db: db
+  })
+  tree.set('foo', Buffer.from('bar'))
+  tree.set('foob', Buffer.from('baz'))
+  const node = await tree.get('foob')
+  t.equals(node.value.toString(), 'baz')
+
+  tree.delete('foob')
+  const node2 = await tree.get('foo')
+  t.equals(node2.value.toString(), 'bar')
+  t.end()
+})
+
+tape('insert that creates one new node', async t => {
+  let tree = new RadixTree({
+    db: db
+  })
+  tree.set([0, 0, 1], Buffer.from('bar'))
+  await tree.set([0, 0, 0], Buffer.from('baz'))
+  await tree.set([0, 0], Buffer.from('lol'))
+  const node = await tree.get([0, 0, 0])
+  t.equals(node.value.toString(), 'baz')
+
+  await tree.delete([0, 0])
+  const node2 = await tree.get([0, 0, 1])
+  t.equals(node2.value.toString(), 'bar')
+  t.end()
+})
+
 tape('set and get', async t => {
   const r = await RadixTree.getMerkleLink(Buffer.from([0]))
 
@@ -92,7 +123,24 @@ tape('set and get', async t => {
 
   val = await tree.get('test')
   t.equals(val.value.toString(), 'cat111')
-  // console.log(JSON.stringify(tree.root, null, 2))
+
+  const json = [
+    [5, '0,1,1,1,0'], {
+      '/': [
+        [18, '1,0,0,1,1,0,0,0,0,1,0,1,1,0,0,1,0,0'], null, null, '0x63617432'
+      ]
+    }, {
+      '/': [
+        [10, '0,0,0,1,1,0,0,1,0,1'], {
+          '/': [
+            [15, '1,1,1,0,0,1,1,0,1,1,1,0,1,0,0'], null, null, '0x636174313131'
+          ]
+        },
+        null, '0x626c6f70'
+      ]
+    }
+  ]
+  t.deepEquals(tree.toJSON(), json)
   t.end()
 })
 
@@ -101,10 +149,10 @@ tape('branch nodes', async t => {
     db: db
   })
 
-  let key0 = new RadixTree.ArrayConstructor([1, 1])
-  let key1 = new RadixTree.ArrayConstructor([0, 1])
-  let key2 = new RadixTree.ArrayConstructor([1, 0])
-  let key3 = new RadixTree.ArrayConstructor([0, 0])
+  let key0 = [1, 1]
+  let key1 = [0, 1]
+  let key2 = [1, 0]
+  let key3 = [0, 0]
 
   tree.set(key0, Buffer.from('cat'))
   tree.set(key1, Buffer.from('cat2'))
@@ -119,6 +167,7 @@ tape('branch nodes', async t => {
   t.equals(val.value.toString(), 'cat')
   val = await tree.get(key3)
   t.equals(val.value.toString(), 'cat3')
+
 
   t.end()
 })
@@ -186,8 +235,6 @@ tape('random', async t => {
     const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
     tree.set(key, Buffer.from([i]))
   }
-  // console.log(JSON.stringify(tree.root, null, 2))
-
   await tree.flush()
 
   for (let i = 0; i < entries; i++) {
