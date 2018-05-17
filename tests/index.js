@@ -168,7 +168,6 @@ tape('branch nodes', async t => {
   val = await tree.get(key3)
   t.equals(val.value.toString(), 'cat3')
 
-
   t.end()
 })
 
