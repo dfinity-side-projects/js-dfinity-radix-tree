@@ -1,1 +1,1 @@
-module.exports = window.fetch
+module.exports = self.fetch
