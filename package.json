@@ -23,7 +23,7 @@
     "documentation": "^7.0.0",
     "fs-extra": "^6.0.0",
     "level-browserify": "^1.1.2",
-    "nyc": "^11.8.0",
+    "nyc": "^12.0.1",
     "standard": "^11.0.1",
     "tape": "^4.6.3"
   },
@@ -37,7 +37,8 @@
   },
   "standard": {
     "ignore": [
-      "/benchmark/"
+      "/benchmark/",
+      "fetch.js"
     ]
   },
   "bugs": {
