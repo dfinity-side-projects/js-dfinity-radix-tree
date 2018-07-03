@@ -14,7 +14,8 @@ module.exports = class TreeDAG extends DAG {
           '/': val
         }
       }
-    }
+    },
+    size: 4194304 // set heap usage to 4MB
   })) {
     super(dag)
     this.decoder = decoder
