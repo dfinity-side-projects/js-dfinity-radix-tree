@@ -5,7 +5,7 @@
       "value": "0x4cf812be9be2c6008325050f43d06676a08612c7"
     }
   ],
-  "setAndGet": [
+  "insert_and_lookup": [
     {
       "op": "set",
       "key": "0x74657374",
@@ -62,6 +62,58 @@
       "op": "get",
       "key": "0x74657374",
       "value": "0x636174313131"
+    }
+  ],
+  "insert_and_lookup_2": [
+    {
+      "op": "set",
+      "key": "0x61",
+      "value": "0x3239"
+    },
+    {
+      "op": "set",
+      "key": "0x612f",
+      "value": "0x3136313438"
+    },
+    {
+      "op": "set",
+      "key": "0x612f30",
+      "value": "0x36373132"
+    },
+    {
+      "op": "set",
+      "key": "0x612f31",
+      "value": "0x3732"
+    },
+    {
+      "op": "set",
+      "key": "0x62",
+      "value": "0x3237"
+    },
+    {
+      "op": "set",
+      "key": "0x622f",
+      "value": "0x3136313438"
+    },
+    {
+      "op": "set",
+      "key": "0x622f30",
+      "value": "0x36373132"
+    },
+    {
+      "op": "set",
+      "key": "0x622f31",
+      "value": "0x3232"
+    },
+    {
+      "op": "set",
+      "key": "0x622f31",
+      "value": "0x3730"
+    },
+    {
+      "op": "get",
+      "key": "0x612f31",
+      "value": "0x3732"
     }
   ],
   "insert_and_delete": [
