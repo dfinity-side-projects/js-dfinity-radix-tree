@@ -24,7 +24,7 @@ The full encoded node would then look something like. `0x07<20_bytes_for_lbranch
 ### Branches
 
 The branch elements point to the next node in the tree using a merkle link.
-A merkle link is defined by the first 20 bytes of the result SHA2-256 of an encoded node.
+A merkle link is defined by a 20 byte BLAKE2s hash of an encoded node.
 
 
 ```
@@ -32,7 +32,7 @@ branch : = <merkle link>
 ```
 
 ```
-link := SHA2(encoded_node)[0..20]
+link := BLAKE2s(encoded_node, 20)
 ```
 
 

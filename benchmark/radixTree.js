@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+const blake2s = require('../ext/blake2s.js')
 const RadixTree = require('../')
 const cbor = require('borc')
 const zlib = require('zlib')
@@ -19,7 +19,7 @@ async function main () {
   const entries = 100000 // 5117051
   console.log('entries', entries)
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     await tree.set(key, i)
   }
   console.log('flushing')
@@ -35,7 +35,7 @@ async function main () {
       dag: dag,
       root: {'/': sr['/']}
     })
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     await tree.get(key)
     const encoded = cbor.encode(tree.root)
     proofSize += encoded.length

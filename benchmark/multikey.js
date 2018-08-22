@@ -1,5 +1,5 @@
 const IPFS = require('ipfs')
-const crypto = require('crypto')
+const blake2s = require('../ext/blake2s.js')
 const RadixTree = require('../')
 const cbor = require('borc')
 const zlib = require('zlib')
@@ -19,7 +19,7 @@ node.on('ready', async () => {
   const entries = 10000 //5117051
   console.log('entries', entries)
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     await tree.set(key, i)
   }
   console.log('flushing')
@@ -36,7 +36,7 @@ node.on('ready', async () => {
 
   const numOfKeys = 3
   for (let i = 0; i < numOfKeys; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     await tree.get(key)
   }
 

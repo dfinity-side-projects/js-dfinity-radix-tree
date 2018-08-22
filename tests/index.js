@@ -1,13 +1,13 @@
 const fs = require('fs-extra')
 const tape = require('tape')
-const crypto = require('crypto')
+const blake2s = require('../ext/blake2s.js')
 const level = require('level-browserify')
 const RadixTree = require('../')
 const RemoteDataStore = require('../remoteDatastore')
 const remote = require('./remote')
 const db = level('./testdb')
 
-tape('root existance', async t => {
+tape('root existence', async t => {
   let tree = new RadixTree({
     db: db
   })
@@ -25,9 +25,9 @@ tape('should generate the same stateRoot', async t => {
     db: db
   })
   tree.root = [null, null, null]
-  const stateRoot = await tree.flush()
+  const stateRoot1 = await tree.flush()
   const stateRoot2 = await tree.flush()
-  t.deepEquals(stateRoot2, stateRoot)
+  t.deepEquals(stateRoot2, stateRoot1)
   t.end()
 })
 
@@ -42,9 +42,9 @@ tape('should generate the same stateRoot', async t => {
   await tree1.flush()
   tree1.set('test', Buffer.from('cat'))
   tree2.set('test', Buffer.from('cat'))
-  const stateRoot = await tree1.flush()
+  const stateRoot1 = await tree1.flush()
   const stateRoot2 = await tree2.flush()
-  t.deepEquals(stateRoot2, stateRoot)
+  t.deepEquals(stateRoot2, stateRoot1)
   t.end()
 })
 
@@ -82,7 +82,7 @@ tape('insert that creates one new node', async t => {
 tape('set and get', async t => {
   const r = await RadixTree.getMerkleLink(Buffer.from([0]))
 
-  t.equal(r.toString('hex'), '6e340b9cffb37a989ca544e6bb780a2c78901d3f', 'should hash')
+  t.equal(r.toString('hex'), '63a5f3dba42c1ee9ce4147c1b22e0b61f4c7a17a', 'should hash')
 
   let tree = new RadixTree({
     db: db
@@ -231,20 +231,20 @@ tape('random', async t => {
   })
   const entries = 100
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     tree.set(key, Buffer.from([i]))
   }
   await tree.flush()
 
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     const value = await tree.get(key)
     t.equals(value.value[0], i)
   }
 
   await tree.flush()
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     await tree.delete(key)
   }
 
@@ -262,7 +262,7 @@ tape('remote', async t => {
 
   const entries = 100
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     remoteTree.set(key, Buffer.from([i]))
   }
   const stateRoot = await remoteTree.flush()
@@ -275,7 +275,7 @@ tape('remote', async t => {
   localTree.root = stateRoot
 
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     const value = await localTree.get(key)
     t.equals(value.value[0], i)
   }
@@ -293,7 +293,7 @@ tape('reset', async t => {
 
   const entries = 100
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     tree.set(key, Buffer.from([i]))
   }
 

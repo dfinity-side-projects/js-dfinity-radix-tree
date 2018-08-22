@@ -1,5 +1,5 @@
 var Trie = require('merkle-patricia-tree')
-const crypto = require('crypto')
+const blake2s = require('../ext/blake2s.js')
 // const rlp = require('rlp')
 const level = require('level')
 const db = level('./eth-testdb')
@@ -22,7 +22,7 @@ async function run () {
   let hrstart = process.hrtime()
 
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     await new Promise((resolve, reject) => {
       trie.put(key, i, resolve)
     })
@@ -41,7 +41,7 @@ async function run () {
 
   let proofSize = 0
   for (let i = 0; i < entries; i++) {
-    const key = crypto.createHash('sha256').update(i.toString()).digest().slice(0, 20)
+    const key = (new blake2s(20)).update(Buffer.from(i.toString())).digest()
     trie = new Trie(db, trie.root)
     const promise = new Promise((resolve, reject) => {
       trie.get(key, (err, value) => {

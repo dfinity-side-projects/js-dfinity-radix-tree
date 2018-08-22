@@ -2,7 +2,7 @@
   "empty": [
     {
       "op": "stateRoot",
-      "value": "0x4cf812be9be2c6008325050f43d06676a08612c7"
+      "value": "0x20fa0017102396a41d3a85d0f012cafecc386791"
     }
   ],
   "insert_and_lookup": [
@@ -13,7 +13,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x01cff22f1e93e25d8691d6238031d98885ab468f"
+      "value": "0x0145fb4f4b0d9ba062b5c1f8f9ea3011abf05a78"
     },
     {
       "op": "get",
@@ -42,7 +42,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x05213318991804dad6a926aacfd4ac3481161371"
+      "value": "0x691dfb2e5ee80a49c8c6b8057f6c3fe2710fed33"
     },
     {
       "op": "get",
@@ -56,7 +56,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x80a385b4f06471e95a5993ef0e3b7aa99b64241c"
+      "value": "0x66f5992b3490eb31d6bbd70a939b025fa86b0dfd"
     },
     {
       "op": "get",
@@ -134,7 +134,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0xbccc80ab0d248beb8e6ce7b81c78559c506cedac"
+      "value": "0x41de23013716dfaa4df28fd1def8dec7c7d384f9"
     },
     {
       "op": "delete",
@@ -151,7 +151,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x3a6305b358770cafa44b3b358fa98746fbd8679f"
+      "value": "0x66cea27538d7379d9729fb51d0779edc0c88d69a"
     }
   ],
   "insert_and_delete_2": [
@@ -172,7 +172,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x42c33979750064d830468c4cc954642a14d97497"
+      "value": "0xf17fd60f95fe358fe92167ea9bf80d3fcfc89199"
     },
     {
       "op": "delete",
@@ -185,7 +185,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x52c8cef4b4014aba94b7bc1990919335b417cf13"
+      "value": "0x56c5da11204012c32c00d0dfd38a947fc649d5f3"
     }
   ],
   "delete_with_one_branch": [
@@ -210,7 +210,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0xf47670c01ff5450ff83c1e7f46092e94fc2c0d0b"
+      "value": "0x2745c97774a618af7647b45b8dcacb5c465a27c3"
     }
   ],
   "delete_with_two_branches": [
@@ -235,7 +235,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0xf7d7490a412c72a2fa66bf3b85af4a1027f02058"
+      "value": "0xb5b80d3405e4141a55ae24b2f1dfc3cb8c854e50"
     }
   ],
   "delete_with_no_branches": [
@@ -260,7 +260,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x230a8e726c6444964d027d906fe0fdc361122163"
+      "value": "0x4fe05cfc700913eb371b22f4bc0d4318c8b48c12"
     }
   ],
   "saturatedTree": [
@@ -326,7 +326,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0xc4bf5d2ff89e90cd9edd81e8e160953406ac446b"
+      "value": "0x8ba09db363271b06be6e49e257976e3f243b2d6d"
     },
     {
       "op": "get",
@@ -438,7 +438,7 @@
     },
     {
       "op": "stateRoot",
-      "value": "0x4cf812be9be2c6008325050f43d06676a08612c7"
+      "value": "0x20fa0017102396a41d3a85d0f012cafecc386791"
     }
   ]
 }
