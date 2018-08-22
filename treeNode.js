@@ -1,5 +1,5 @@
 const cbor = require('borc')
-const EMPTY_STATE_ROOT = Buffer.from('4cf812be9be2c6008325050f43d06676a08612c7', 'hex')
+const EMPTY_STATE_ROOT = Buffer.from('20fa0017102396a41d3a85d0f012cafecc386791', 'hex')
 
 const LINK_TAG = 42
 
