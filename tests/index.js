@@ -5,24 +5,26 @@ const level = require('level-browserify')
 const RadixTree = require('../')
 const RemoteDataStore = require('../remoteDatastore')
 const remote = require('./remote')
+
+fs.removeSync('./testdb')
 const db = level('./testdb')
 
 tape('root existence', async t => {
-  let tree = new RadixTree({
-    db: db
+  const tree = new RadixTree({
+    db
   })
   let exists = await tree.rootExists(Buffer.from([0]))
   t.equals(exists, false)
 
   tree.set('test', Buffer.from('cat'))
-  exists = await tree.rootExists(Buffer.from('01cff22f1e93e25d8691d6238031d98885ab468f', 'hex'))
+  exists = await tree.rootExists(Buffer.from('0145fb4f4b0d9ba062b5c1f8f9ea3011abf05a78', 'hex'))
   t.equals(exists, true)
   t.end()
 })
 
 tape('should generate the same stateRoot', async t => {
-  let tree = new RadixTree({
-    db: db
+  const tree = new RadixTree({
+    db
   })
   tree.root = [null, null, null]
   const stateRoot1 = await tree.flush()
@@ -32,11 +34,11 @@ tape('should generate the same stateRoot', async t => {
 })
 
 tape('should generate the same stateRoot', async t => {
-  let tree1 = new RadixTree({
+  const tree1 = new RadixTree({
     db
   })
 
-  let tree2 = new RadixTree({
+  const tree2 = new RadixTree({
     db
   })
   await tree1.flush()
@@ -49,8 +51,8 @@ tape('should generate the same stateRoot', async t => {
 })
 
 tape('insert that creates one new node', async t => {
-  let tree = new RadixTree({
-    db: db
+  const tree = new RadixTree({
+    db
   })
   tree.set('foo', Buffer.from('bar'))
   tree.set('foob', Buffer.from('baz'))
@@ -64,8 +66,8 @@ tape('insert that creates one new node', async t => {
 })
 
 tape('insert that creates one new node', async t => {
-  let tree = new RadixTree({
-    db: db
+  const tree = new RadixTree({
+    db
   })
   tree.set([0, 0, 1], Buffer.from('bar'))
   await tree.set([0, 0, 0], Buffer.from('baz'))
@@ -85,7 +87,7 @@ tape('set and get', async t => {
   t.equal(r.toString('hex'), '63a5f3dba42c1ee9ce4147c1b22e0b61f4c7a17a', 'should hash')
 
   let tree = new RadixTree({
-    db: db
+    db
   })
 
   tree.set('test', Buffer.from('cat'))
@@ -111,7 +113,7 @@ tape('set and get', async t => {
 
   // try reteriving node from ipfs
   tree = new RadixTree({
-    db: db,
+    db,
     root: stateRoot
   })
 
@@ -146,7 +148,7 @@ tape('set and get', async t => {
 
 tape('branch nodes', async t => {
   const tree = new RadixTree({
-    db: db
+    db
   })
 
   let key0 = [1, 1]
@@ -173,7 +175,7 @@ tape('branch nodes', async t => {
 
 tape('delete', async t => {
   const tree = new RadixTree({
-    db: db
+    db
   })
   tree.set('test', Buffer.from('cat'))
   tree.set('ter', Buffer.from('cat3'))
@@ -201,7 +203,7 @@ tape('delete', async t => {
 
 tape('large values', async t => {
   const tree = new RadixTree({
-    db: db
+    db
   })
   const saved = Buffer.alloc(33).fill(1)
   tree.set('test', saved)
@@ -212,7 +214,7 @@ tape('large values', async t => {
 
 tape('errors', async t => {
   const tree = new RadixTree({
-    db: db,
+    db,
     root: {
       '/': Buffer.alloc(20)
     }
@@ -227,7 +229,7 @@ tape('errors', async t => {
 
 tape('random', async t => {
   const tree = new RadixTree({
-    db: db
+    db
   })
   const entries = 100
   for (let i = 0; i < entries; i++) {
@@ -256,7 +258,7 @@ tape('random', async t => {
 tape('remote', async t => {
   // remote
   const remoteTree = new RadixTree({
-    db: db
+    db
   })
   const server = remote.listen(db)
 
@@ -286,7 +288,7 @@ tape('remote', async t => {
 
 tape('reset', async t => {
   const tree = new RadixTree({
-    db: db
+    db
   })
 
   const stateRoot1 = await tree.flush()
