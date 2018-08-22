@@ -38,6 +38,8 @@
   "standard": {
     "ignore": [
       "/benchmark/",
+      "/ext/",
+      "/tests/",
       "fetch.js"
     ]
   },
