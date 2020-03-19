@@ -19,7 +19,7 @@
     "dfinity"
   ],
   "devDependencies": {
-    "coveralls": "^3.0.1",
+    "coveralls": "^3.0.10",
     "documentation": "^8.0.0",
     "fs-extra": "^6.0.0",
     "level-browserify": "^1.1.2",
